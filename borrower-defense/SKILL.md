@@ -132,14 +132,18 @@ If the user has audio recordings (meetings, calls), this is extremely powerful e
 
 Then paste the transcript and key quotes back here so we can use them in the application."
 
-**Audio compression for upload:** The StudentAid.gov portal has a 5MB per file upload limit. Compress audio:
+**Audio files CANNOT be uploaded to the portal.** Accepted formats: .doc, .docx, .pdf, .xls, .xlsx, .txt, .ppt, .pptx, .bmp, .gif, .jpg, .png, .psd, .tiff, .tif. No audio or video files.
 
+**Instead, convert audio to a transcript document:**
+1. Tell the user to upload the audio to Gemini's web interface at gemini.google.com
+2. Ask Gemini to: "Transcribe this entire recording with speaker attribution. For each speaker turn, label who is speaking. Then separately list the 10 most important quotes where faculty or administration make admissions, contradict themselves, or say anything that could be evidence of institutional misconduct."
+3. Save the transcript as a .txt file and upload THAT to the portal
+4. The user should also keep the original audio file safely stored in case the Department of Education requests it later
+
+**Audio compression (for backup/reference only):** Even though the portal won't accept audio, compress and save it locally in case ED requests it:
 ```bash
 ffmpeg -i "INPUT.m4a" -c:a aac -b:a 12k -ar 8000 -ac 1 "OUTPUT.m4a"
 ```
-
-Target: under 5MB. 12kbps/8kHz is telephone quality but perfectly audible for speech.
-
 Install ffmpeg if missing: `winget install ffmpeg --accept-package-agreements --accept-source-agreements`
 
 #### 2c: Additional Evidence to Request
@@ -271,14 +275,15 @@ FILES TO UPLOAD (all in ~/Downloads/BDTR_Submission/):
 
 On the Employment Prospects allegation page:
 [ ] Supplemental_Sworn_Statement.txt
-[ ] Audio recording (compressed to under 5MB)
+[ ] Full_Audio_Transcript.txt (from Gemini transcription - NOT the audio file)
 [ ] Evidence_Index_and_Transcript.txt
 [ ] DRW/legal counsel email
 [ ] Access Services/accommodation emails
 [ ] Financial aid correspondence
 
 Upload limit: 5MB per file
-Accepted formats: PDF, TXT, PNG, JPG, DOC, M4A
+Accepted formats: .doc .docx .pdf .xls .xlsx .txt .ppt .pptx .bmp .gif .jpg .png .psd .tiff .tif
+NOTE: NO audio or video files accepted. Convert recordings to transcripts.
 ```
 
 ---
