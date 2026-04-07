@@ -1,84 +1,211 @@
 # Claude Code Skills
 
-A collection of custom skills for [Claude Code](https://claude.ai/claude-code) (Anthropic's CLI agent). Each skill is a self-contained `SKILL.md` file that teaches Claude how to handle a specific complex task.
+Custom skills for [Claude Code](https://claude.ai/claude-code) -- Anthropic's agentic CLI. Each skill is a `SKILL.md` playbook that teaches Claude how to handle a complex, multi-step task autonomously.
+
+## Quick Start
+
+```bash
+# Clone the repo
+git clone https://github.com/SolshineCode/claude-code-skills.git
+cd claude-code-skills
+
+# Install one skill
+cp -r skill-tsa ~/.claude/skills/
+
+# Install all skills
+cp -r */ ~/.claude/skills/
+
+# Use it in Claude Code
+# Type: /skill-tsa all
+```
+
+That's it. Claude Code auto-detects any `SKILL.md` in `~/.claude/skills/`. No config needed.
+
+---
 
 ## Skills
 
-### Application & Legal
-| Skill | Description |
-|-------|-------------|
-| **borrower-defense** | Borrower Defense to Repayment application assistant. Full pipeline: evidence gathering via Gmail, audio transcription, narrative drafting, human-writing polish, StudentAid.gov portal automation, strategic review. |
+### skill-tsa
+**Security scanner for Claude Code skills.**
 
-### Writing & Content
-| Skill | Description |
-|-------|-------------|
-| **human-writing-check** | AI writing detection and removal based on Wikipedia's comprehensive detection guide. Scans for banned words, structural patterns, style tells, and rewrites to sound human. |
+Scan any skill for malicious commands, prompt injection, data exfiltration, obfuscated code, and scope creep before you install it.
 
-### Networking & Outreach
-| Skill | Description |
-|-------|-------------|
-| **linkedin-os** | Automated LinkedIn networking system. Job search campaigns (25 connections/week, follow-up sequences, referral requests) and VC networking campaigns. Uses Claude in Chrome. |
-
-### AI Delegation
-| Skill | Description |
-|-------|-------------|
-| **gemini-collab** | Delegate to Google's Gemini via CLI. Gmail API access, web research, large-file analysis, documentation generation. Free with Google subscription. |
-| **nemotron-collab** | Delegate to local Nemotron model via Ollama. Zero-cost, zero-latency for file summarization, log analysis, boilerplate generation. |
-
-### Browser Automation
-| Skill | Description |
-|-------|-------------|
-| **comet-bridge** | Perplexity's Comet agentic browser via MCP. Connection patterns, known quirks, hybrid workflow (Comet for research, Chrome for actions). Includes security considerations. |
-
-### Image Generation
-| Skill | Description |
-|-------|-------------|
-| **nano-banana** | Image generation via Gemini CLI. Blog images, thumbnails, icons, diagrams, illustrations, photos. Routes all image requests through Gemini. |
-
-### Autonomous Work
-| Skill | Description |
-|-------|-------------|
-| **deep-work** | Autonomous multi-hour task execution. For when you want to hand off a large task and walk away. Manages its own planning, execution, and progress tracking. |
-| **commercialize** | Take a technology concept from idea to market-ready assets. Patent drafts, scientific publications, product design, business strategy, all built out in a dedicated GitHub repo. |
-
-## Installation
-
-Copy any skill directory into `~/.claude/skills/` and Claude Code will auto-detect it:
-
-```bash
-# Single skill
-cp -r borrower-defense ~/.claude/skills/
-
-# All skills
-cp -r */ ~/.claude/skills/
+```
+/skill-tsa borrower-defense          # scan one skill
+/skill-tsa all                       # scan every installed skill
+/skill-tsa https://github.com/x/y   # scan a remote repo BEFORE installing
 ```
 
-Then invoke with `/skill-name` in Claude Code (e.g., `/borrower-defense`), or Claude will auto-trigger based on conversation context.
+Checks 5 categories: dangerous commands (rm -rf, curl|sh, eval), prompt injection (role hijacking, hidden instructions, consent fabrication), data exfiltration (credential theft, sending files to external URLs), suspicious patterns (obfuscated code, hidden text), and scope creep (a "formatter" skill that reads your email).
 
-## Prerequisites by Skill
+**Requires:** Nothing. Works on any machine with Claude Code.
 
-| Skill | Requires |
-|-------|----------|
-| borrower-defense | Gemini CLI (authed), Claude in Chrome, ffmpeg, FSA ID |
-| human-writing-check | None |
-| linkedin-os | Claude in Chrome |
-| gemini-collab | Gemini CLI (authed) |
-| nemotron-collab | Ollama with Nemotron model |
-| comet-bridge | Comet browser, comet-mcp |
-| nano-banana | Gemini CLI |
-| deep-work | None |
-| commercialize | GitHub CLI |
+---
 
-## Creating Your Own Skills
+### human-writing-check
+**Detect and remove AI writing tells.**
 
-A skill is just a directory with a `SKILL.md` file inside `~/.claude/skills/`. The SKILL.md should contain:
+Based on [Wikipedia's Signs of AI Writing guide](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing). Scans text for banned words ("delve", "tapestry", "landscape"), structural patterns (rule of three, em dashes, not-just-X-but-Y), style tells (synonym cycling, uniform paragraphs), and tone issues (universal positivity, vague attributions).
 
-1. A description of when to trigger the skill
-2. Step-by-step instructions for Claude to follow
-3. Code patterns, command templates, and known gotchas
-4. Examples of expected inputs and outputs
+Use it on blog posts, articles, documentation, LinkedIn messages, legal documents, or anything you're publishing under your name.
 
-Claude Code reads the SKILL.md when the skill is invoked and follows it as a detailed playbook.
+```
+/human-writing-check              # review the most recent text Claude drafted
+/human-writing-check myfile.md    # review a specific file
+```
+
+Gives a numbered violation list, rewrites the entire text to sound human, then does a second pass. Reports the most common tells so you can watch for them in future drafts.
+
+**Requires:** Nothing.
+
+---
+
+### gemini-collab
+**Delegate tasks to Google's Gemini to save Claude tokens.**
+
+Gemini is free (with Google subscription), has a 1M token context, and can do web research, Gmail API access, large-file analysis, documentation generation, and code review. Less capable than Claude for complex reasoning but great for grunt work.
+
+The killer feature: **Gemini CLI has Gmail API access.** When run with `--yolo`, it can search, read, and export emails programmatically. This is faster and more reliable than browser automation for any email-related task.
+
+```python
+# Headless call
+python "~/.claude/skills/gemini-collab/scripts/gemini_client.py" \
+  --prompt "Summarize the errors in these logs" --timeout 300
+
+# With file system access
+python "~/.claude/skills/gemini-collab/scripts/gemini_client.py" \
+  --prompt "Search Gmail for emails from example.com and save them" \
+  --yolo --cwd /path/to/output
+```
+
+**Requires:** Gemini CLI installed and authenticated. Run `gemini` interactively once to complete Google OAuth before first use.
+
+---
+
+### nemotron-collab
+**Delegate tasks to a local Nemotron model via Ollama.**
+
+Zero cost, zero latency, fully private. Good for file summarization, log analysis, boilerplate generation, code formatting, data extraction. Use when you don't need internet access and want to keep data local.
+
+**Requires:** Ollama installed with a Nemotron model pulled.
+
+---
+
+### comet-bridge
+**Working with Perplexity's Comet agentic browser.**
+
+Comet is an AI browser that can autonomously research topics, read pages, and compile findings. This skill documents how to connect it via MCP, what works vs what crashes, and the recommended hybrid workflow.
+
+The key insight: **use Comet for research, Chrome for actions.** Comet's CDP connection crashes when it tries to post comments, send messages, or click buttons. But for reading and analyzing web content across multiple sites, it's 10x cheaper than Chrome automation (50-100K tokens saved per research task).
+
+Includes security considerations for remote debugging port exposure and data transmission to Perplexity servers.
+
+**Requires:** Comet browser (Perplexity desktop app), comet-mcp npm package.
+
+---
+
+### borrower-defense
+**Borrower Defense to Repayment application assistant.**
+
+Guides you through filing a federal BDTR application to discharge student loans when your school committed misconduct (fraud, misrepresentation, disability discrimination, broken programs, etc.).
+
+Handles the entire pipeline across 8 phases:
+1. Intake interview (structured questions about your situation)
+2. Evidence gathering (Gmail search via Gemini, audio transcription guidance, FERPA request drafting)
+3. Narrative drafting (sworn statement with portal character restrictions)
+4. Human-writing check (mandatory AI-writing decontamination)
+5. Portal form filling (JS-accelerated automation of StudentAid.gov's 7-step form)
+6. Evidence upload checklist (manual step, with exact file locations)
+7. Strategic positioning review (legal standard analysis by loan period, evidence strength)
+8. Handoff (session notes, memory, calendar reminders, post-submission checklist)
+
+Built from a real application session. Includes hard-won lessons about the portal's aggressive timeouts, character restrictions, React form quirks, and session management.
+
+**Requires:** Gemini CLI (authed for Gmail), Claude in Chrome, ffmpeg (for audio compression), FSA ID account at StudentAid.gov.
+
+---
+
+### linkedin-os
+**Automated LinkedIn networking system.**
+
+Two campaign types:
+- **Job Search:** 25 personalized connection requests per week, follow-up sequences on day 3/7/14, referral requests after building context.
+- **VC Networking:** Build relationships with investors over weeks, share traction and insights, eventually request intro meetings.
+
+Uses Claude in Chrome for all LinkedIn interactions. Includes message templates, status tracking, and daily/weekly workflows.
+
+**Requires:** Claude in Chrome browser extension, LinkedIn account.
+
+---
+
+### nano-banana
+**Image generation via Gemini CLI.**
+
+Routes all image generation requests through Gemini. Handles blog featured images, YouTube thumbnails, icons, diagrams, patterns, illustrations, photos, and visual assets. Use whenever you need Claude to create any visual content.
+
+**Requires:** Gemini CLI.
+
+---
+
+### deep-work
+**Autonomous multi-hour task execution.**
+
+For when you want to hand off a large, complex task and walk away. Claude manages its own planning, execution, and progress tracking without asking questions. Use for tasks that would take a human multiple hours of focused work.
+
+```
+/deep-work "Refactor the authentication system to use JWT tokens"
+/deep-work "Write comprehensive tests for the API layer"
+```
+
+**Requires:** Nothing.
+
+---
+
+### commercialize
+**Take a technology from idea to market-ready assets.**
+
+Creates a dedicated GitHub repo and builds out: patent application drafts, scientific publication drafts, product design documents, business strategy, market analysis. Use when you have a technical concept and want everything needed to bring it to market.
+
+```
+/commercialize "Novel approach to X using Y"
+```
+
+**Requires:** GitHub CLI (`gh`).
+
+---
+
+## How Skills Work
+
+A Claude Code skill is just a folder with a `SKILL.md` file inside `~/.claude/skills/`. When you type `/skill-name` or Claude detects a matching conversation topic, it reads the SKILL.md and follows it as a detailed playbook.
+
+```
+~/.claude/skills/
+  my-skill/
+    SKILL.md          # Required. The playbook Claude follows.
+    scripts/          # Optional. Helper scripts the skill references.
+    references/       # Optional. Templates, examples, docs.
+```
+
+Skills can reference other skills (borrower-defense uses gemini-collab and human-writing-check). They can include scripts that Claude executes. They can have any structure as long as SKILL.md is at the root.
+
+## Creating Your Own
+
+1. Create a directory in `~/.claude/skills/your-skill-name/`
+2. Write a `SKILL.md` with:
+   - **When to trigger** (what user requests match this skill)
+   - **Step-by-step instructions** (what Claude should do, in order)
+   - **Code patterns and commands** (exact commands, not vague descriptions)
+   - **Known gotchas** (what will go wrong and how to handle it)
+   - **Examples** (what good input/output looks like)
+3. Test it by typing `/your-skill-name` in Claude Code
+
+The best skills are built from real sessions where you solved a hard problem. The SKILL.md captures everything you learned so Claude (and other users) can repeat it without rediscovering every pitfall.
+
+## Security
+
+Run `/skill-tsa` on any skill before installing it. See the [skill-tsa](#skill-tsa) section above.
+
+Skills have the same access as Claude Code itself -- they can read/write files, run commands, and access the internet. A malicious skill could exfiltrate data, delete files, or manipulate Claude's behavior via prompt injection. Only install skills from sources you trust, and scan them first.
 
 ## License
 
