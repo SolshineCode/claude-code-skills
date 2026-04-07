@@ -4,37 +4,81 @@ A collection of custom skills for [Claude Code](https://claude.ai/claude-code) (
 
 ## Skills
 
-### borrower-defense
-**Borrower Defense to Repayment Application Assistant.** Guides users through filing a BDTR application on StudentAid.gov to discharge federal student loans when their school engaged in misconduct. Handles the full pipeline: intake interview, Gmail evidence gathering (via Gemini CLI), audio transcription guidance, narrative drafting, human-writing polish, portal form filling via browser automation, and strategic positioning review.
+### Application & Legal
+| Skill | Description |
+|-------|-------------|
+| **borrower-defense** | Borrower Defense to Repayment application assistant. Full pipeline: evidence gathering via Gmail, audio transcription, narrative drafting, human-writing polish, StudentAid.gov portal automation, strategic review. |
 
-Dependencies: `gemini-collab`, `human-writing-check`, Claude in Chrome extension, ffmpeg
+### Writing & Content
+| Skill | Description |
+|-------|-------------|
+| **human-writing-check** | AI writing detection and removal based on Wikipedia's comprehensive detection guide. Scans for banned words, structural patterns, style tells, and rewrites to sound human. |
 
-### human-writing-check
-**AI Writing Detection and Removal.** Reviews drafted text for signs of AI-generated writing based on [Wikipedia's Signs of AI Writing guide](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) and fixes every violation. Covers banned words, structural patterns, style tells, and tone issues. Essential for any prose that will be published or submitted under someone's name.
+### Networking & Outreach
+| Skill | Description |
+|-------|-------------|
+| **linkedin-os** | Automated LinkedIn networking system. Job search campaigns (25 connections/week, follow-up sequences, referral requests) and VC networking campaigns. Uses Claude in Chrome. |
 
-### gemini-collab
-**Gemini CLI Collaboration.** Delegates subtasks to Google's Gemini model via the locally installed Gemini CLI. Includes a Python wrapper script for headless calls. Key use case: Gmail API access for searching/exporting emails programmatically (faster and more reliable than browser automation for email tasks).
+### AI Delegation
+| Skill | Description |
+|-------|-------------|
+| **gemini-collab** | Delegate to Google's Gemini via CLI. Gmail API access, web research, large-file analysis, documentation generation. Free with Google subscription. |
+| **nemotron-collab** | Delegate to local Nemotron model via Ollama. Zero-cost, zero-latency for file summarization, log analysis, boilerplate generation. |
 
-### comet-bridge
-**Comet (Perplexity) Agentic Browser.** Guidelines for working with the Comet browser via comet-mcp. Covers connection, prompting patterns, known quirks (CDP crashes on action tasks, newChat reliability issues), and the recommended hybrid workflow (Comet for research, Chrome for actions).
+### Browser Automation
+| Skill | Description |
+|-------|-------------|
+| **comet-bridge** | Perplexity's Comet agentic browser via MCP. Connection patterns, known quirks, hybrid workflow (Comet for research, Chrome for actions). Includes security considerations. |
+
+### Image Generation
+| Skill | Description |
+|-------|-------------|
+| **nano-banana** | Image generation via Gemini CLI. Blog images, thumbnails, icons, diagrams, illustrations, photos. Routes all image requests through Gemini. |
+
+### Autonomous Work
+| Skill | Description |
+|-------|-------------|
+| **deep-work** | Autonomous multi-hour task execution. For when you want to hand off a large task and walk away. Manages its own planning, execution, and progress tracking. |
+| **commercialize** | Take a technology concept from idea to market-ready assets. Patent drafts, scientific publications, product design, business strategy, all built out in a dedicated GitHub repo. |
 
 ## Installation
 
 Copy any skill directory into `~/.claude/skills/` and Claude Code will auto-detect it:
 
 ```bash
+# Single skill
 cp -r borrower-defense ~/.claude/skills/
+
+# All skills
+cp -r */ ~/.claude/skills/
 ```
 
-Then invoke with `/borrower-defense` in Claude Code, or Claude will auto-trigger based on the skill's trigger conditions.
+Then invoke with `/skill-name` in Claude Code (e.g., `/borrower-defense`), or Claude will auto-trigger based on conversation context.
 
-## Prerequisites
+## Prerequisites by Skill
 
-Some skills require external tools:
-- **Gemini CLI**: `npm install -g @anthropic-ai/gemini-cli` (or however installed). Must run `gemini` interactively once to complete Google OAuth.
-- **Claude in Chrome**: Browser extension from claude.ai/chrome
-- **ffmpeg**: `winget install ffmpeg` (Windows) or `brew install ffmpeg` (Mac)
-- **Comet browser**: Perplexity's desktop browser with `--remote-debugging-port=9222`
+| Skill | Requires |
+|-------|----------|
+| borrower-defense | Gemini CLI (authed), Claude in Chrome, ffmpeg, FSA ID |
+| human-writing-check | None |
+| linkedin-os | Claude in Chrome |
+| gemini-collab | Gemini CLI (authed) |
+| nemotron-collab | Ollama with Nemotron model |
+| comet-bridge | Comet browser, comet-mcp |
+| nano-banana | Gemini CLI |
+| deep-work | None |
+| commercialize | GitHub CLI |
+
+## Creating Your Own Skills
+
+A skill is just a directory with a `SKILL.md` file inside `~/.claude/skills/`. The SKILL.md should contain:
+
+1. A description of when to trigger the skill
+2. Step-by-step instructions for Claude to follow
+3. Code patterns, command templates, and known gotchas
+4. Examples of expected inputs and outputs
+
+Claude Code reads the SKILL.md when the skill is invoked and follows it as a detailed playbook.
 
 ## License
 
