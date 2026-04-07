@@ -188,19 +188,6 @@ A Claude Code skill is just a folder with a `SKILL.md` file inside `~/.claude/sk
 
 Skills can reference other skills (borrower-defense uses gemini-collab and human-writing-check). They can include scripts that Claude executes. They can have any structure as long as SKILL.md is at the root.
 
-## Creating Your Own
-
-1. Create a directory in `~/.claude/skills/your-skill-name/`
-2. Write a `SKILL.md` with:
-   - **When to trigger** (what user requests match this skill)
-   - **Step-by-step instructions** (what Claude should do, in order)
-   - **Code patterns and commands** (exact commands, not vague descriptions)
-   - **Known gotchas** (what will go wrong and how to handle it)
-   - **Examples** (what good input/output looks like)
-3. Test it by typing `/your-skill-name` in Claude Code
-
-The best skills are built from real sessions where you solved a hard problem. The SKILL.md captures everything you learned so Claude (and other users) can repeat it without rediscovering every pitfall.
-
 ## Security
 
 Run `/skill-tsa` on any skill before installing it. See the [skill-tsa](#skill-tsa) section above.
