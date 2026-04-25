@@ -16,7 +16,7 @@ You have been granted a block of GPU time. Your job is to keep the GPU doing use
 1. **Check current time**: Run `date` — do the math explicitly: "Current: X:XX, target: Y:YY, timer cron: MM HH DOM M *"
 2. **Check GPU health**: `nvidia-smi --query-gpu=name,memory.used,memory.free,temperature.gpu --format=csv,noheader`
 3. **Verify CUDA works**: `python -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0))"`
-4. **Set end timer via CronCreate**: One-shot timer at session end. Prompt: "GPU marathon timer fired. Wind down gracefully: let the current job finish its step, save outputs, commit and push everything."
+4. **Set end timer via CronCreate**: One-shot timer at session end. Prompt: "GPU grant timer fired. Wind down gracefully: let the current job finish its step, save outputs, commit and push everything."
 5. **Read project CLAUDE.md and STATUS.md** to understand the current GPU job priority queue.
 
 ## Phase 1: Job Priority
