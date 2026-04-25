@@ -1,11 +1,11 @@
 ---
-name: gpu-marathon
+name: gpu-grant
 description: Use this skill when the user grants Claude a block of GPU time (e.g., "you have the next 8 hours of GPU time") and wants Claude to keep the GPU running useful work continuously until a timer fires. Handles timer setup, job chaining, GPU health monitoring, and graceful shutdown. Designed for AI/ML research workloads on local consumer-grade GPUs (4–16 GB VRAM).
 ---
 
-# GPU Marathon: Continuous Autonomous GPU Session
+# GPU Grant: Continuous Autonomous GPU Session
 
-**This skill builds on and triggers the `/deep-work` autonomous execution framework.** At the start of every GPU marathon session, load the deep-work skill and follow its full Phase 0–5 protocol (understand → plan → research → execute → verify → deliver) for the research work itself. The GPU marathon skill adds on top of deep-work: the timer setup, job chaining, GPU health monitoring, and graceful shutdown that deep-work doesn't cover.
+**This skill builds on and triggers the `/deep-work` autonomous execution framework.** At the start of every GPU grant session, load the deep-work skill and follow its full Phase 0–5 protocol (understand → plan → research → execute → verify → deliver) for the research work itself. The GPU grant skill adds on top of deep-work: the timer setup, job chaining, GPU health monitoring, and graceful shutdown that deep-work doesn't cover.
 
 **Core principle from deep-work applies here:** never ask the user a question; make reasonable decisions and keep moving. The user has handed off the session.
 
@@ -49,7 +49,7 @@ When a job's monitoring timer fires:
 
 1. Let the active job finish its current step or epoch — do NOT kill mid-epoch
 2. Save all outputs to disk
-3. Commit everything to git with message: `"GPU marathon session <date> — <what ran>"`
+3. Commit everything to git with message: `"GPU grant session <date> — <what ran>"`
 4. Push to GitHub
 5. Write `notes/SESSION_SUMMARY_<date>.md`: what ran, what it produced, what it means for next steps
 
