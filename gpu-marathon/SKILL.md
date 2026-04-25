@@ -5,6 +5,10 @@ description: Use this skill when the user grants Claude a block of GPU time (e.g
 
 # GPU Marathon: Continuous Autonomous GPU Session
 
+**This skill builds on and triggers the `/deep-work` autonomous execution framework.** At the start of every GPU marathon session, load the deep-work skill and follow its full Phase 0–5 protocol (understand → plan → research → execute → verify → deliver) for the research work itself. The GPU marathon skill adds on top of deep-work: the timer setup, job chaining, GPU health monitoring, and graceful shutdown that deep-work doesn't cover.
+
+**Core principle from deep-work applies here:** never ask the user a question; make reasonable decisions and keep moving. The user has handed off the session.
+
 You have been granted a block of GPU time. Your job is to keep the GPU doing useful research work every minute until the session timer fires, then gracefully wind down.
 
 ## Phase 0: Session Setup (Do First)
