@@ -197,3 +197,67 @@ Skills have the same access as Claude Code itself -- they can read/write files, 
 ## License
 
 MIT
+
+---
+
+### investor-materials
+**Create investor-facing fundraising materials.**
+
+Adapted from [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) (MIT).
+
+Builds pitch decks, one-pagers, investor memos, financial models, use-of-funds tables, and accelerator applications. Enforces a single source of truth so traction metrics, raise size, team bios, and milestones stay consistent across every document you hand an investor.
+
+```
+/investor-materials     # start building or revising any investor asset
+```
+
+**Requires:** Nothing.
+
+---
+
+### investor-outreach
+**Draft investor communication that gets replies.**
+
+Adapted from [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) (MIT).
+
+Writes cold emails, warm intro blurbs, follow-ups, and post-meeting updates for VCs, angels, and accelerators. Enforces real personalization and a direct ask. Hard-bans filler phrases ("I'd love to connect", "excited to share", generic thesis praise).
+
+```
+/investor-outreach     # write or refine any investor-facing message
+```
+
+**Requires:** Nothing.
+
+---
+
+### frontend-slides
+**Create zero-dependency, animation-rich HTML presentations.**
+
+Adapted from [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) (MIT). Inspired by work by [@zarazhangrui](https://github.com/zarazhangrui).
+
+Generates self-contained HTML presentations from scratch, converts PPT/PPTX files via python-pptx, or enhances existing HTML decks. Enforces viewport-fit (every slide in one viewport, no internal scrolling) as a hard gate. Includes visual style discovery via preview files so non-designers don't need to describe preferences in the abstract.
+
+```
+/frontend-slides       # new deck, PPTX conversion, or deck enhancement
+```
+
+**Requires:** `python-pptx` for PPTX conversion (optional, falls back to manual workflow).
+
+---
+
+### investor-pitch-deck
+**End-to-end YC-style pitch deck orchestrator.**
+
+Locally authored. Wires together `investor-materials`, `frontend-slides`, `investor-outreach`, and `/human-writing-check` into a single workflow. Three modes:
+
+- **Greenfield** — build a fresh deck from a startup description
+- **Refactor** — tighten and YC-ify an existing deck
+- **Mining** — strip an old/external deck for raw copy and assets, build a completely new structure from them
+
+Produces an HTML deck (via `frontend-slides`) or Marp Markdown (CLI-exportable to PPTX/PDF), runs a writing quality pass, and optionally generates outreach emails from the same canonical facts.
+
+```
+/investor-pitch-deck   # start the full pitch deck workflow
+```
+
+**Requires:** `investor-materials`, `frontend-slides` (both in this repo). `investor-outreach` and `human-writing-check` are optional extensions.
