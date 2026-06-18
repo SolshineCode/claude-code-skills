@@ -161,6 +161,19 @@ For when you want to hand off a large, complex task and walk away. Claude manage
 
 ---
 
+### colab-gpu
+**Fully autonomous Google Colab T4 GPU sessions.**
+
+Spins up a cloud GPU (Tesla T4) on Google Colab end-to-end with zero human steps: enforces the correct Google account, selects the T4 runtime, connects, bridges to the notebook via `colab-mcp`, and runs/reads cells with clean structured output. Documents the hard-won mechanics — driving Colab's `goog` menus (which open on `mousedown`+`mouseup`, not click), selecting the T4 `mwc-radio` in shadow DOM, and a two-agent trick that isolates `colab-mcp`'s blocking connect call so it never hangs the session. Compatible as a sub-task inside `/deep-work`.
+
+```
+Use when a task needs a cloud GPU, ML experiments, or interpretability runs on Colab.
+```
+
+**Requires:** Chrome (claude-in-chrome) + `colab-mcp` MCP server. Reads the skill before using any `mcp__colab-mcp__*` tools.
+
+---
+
 ### commercialize
 **Take a technology from idea to market-ready assets.**
 
