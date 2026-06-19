@@ -214,10 +214,17 @@ Use `push_kernel.py` to assemble and push this run.
 
 ## GPU Compatibility: P100 (sm_60) vs T4 (sm_75+)
 
-Kaggle auto-assigns T4 or P100. **Current PyTorch (2.x) does NOT support P100 (sm_60)** — it will warn and CUDA ops will fail. Detect and handle early:
+Kaggle auto-assigns T4 or P100. **P100 (sm_60) is fundamentally incompatible with Kaggle's Python 3.12 environment** — there is no solution short of a T4:
+
+- PyTorch ≤ 2.0 supported sm_60 but has **no Python 3.12 wheels** (torch 2.0.1 predates Python 3.12 by 6 months)
+- PyTorch ≥ 2.1 has Python 3.12 wheels but **dropped sm_60 support**
+
+Attempting `pip install torch==2.0.1+cu117` returns "from versions: none" on Kaggle Python 3.12. There is no downgrade path.
+
+**The right pattern: fail fast on P100, re-push until T4 is assigned.**
 
 ```python
-# At top of script, BEFORE importing torch:
+# At very top of script, BEFORE importing torch:
 import subprocess, sys
 
 GPU_CAP = 99.0
@@ -230,32 +237,15 @@ except Exception as e:
     print(f"Could not detect GPU capability: {e}")
 
 if GPU_CAP < 7.0:
-    print("P100/sm_60: installing torch 2.0.1+cu117 for compatibility...")
-    subprocess.run([sys.executable, "-m", "pip", "install", "-q",
-        "torch==2.0.1+cu117", "torchvision==0.15.2+cu117",
-        "--index-url", "https://download.pytorch.org/whl/cu117"], check=False)
+    print("ABORT: P100/sm_60 assigned. Python 3.12 + current PyTorch has no sm_60 support.")
+    print("Re-push the kernel to get a T4 (sm_75) GPU instead.")
+    sys.exit(1)
 
-# Now safe to import torch
+# Now safe to import torch and use NF4 quantization (requires sm_75+)
 import torch
 ```
 
-After import, check again and skip NF4 4-bit quantization for P100 (bitsandbytes NF4 requires sm_75+):
-
-```python
-USE_QUANTIZATION = torch.cuda.is_available() and torch.cuda.get_device_properties(0).major >= 7
-
-if USE_QUANTIZATION:
-    model = AutoModelForCausalLM.from_pretrained(BASE_MODEL,
-        quantization_config=BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4",
-            bnb_4bit_use_double_quant=True, bnb_4bit_compute_dtype=torch.float16),
-        device_map={"": 0}, token=HF_TOKEN)
-else:
-    # P100: load in float16 (2B model fits in 16GB without quant)
-    model = AutoModelForCausalLM.from_pretrained(BASE_MODEL,
-        torch_dtype=torch.float16, device_map={"": 0}, token=HF_TOKEN)
-```
-
-**P100 training is slower** (~2-4x vs T4 NF4). For a 20k-step run, budget ~2x the wall-clock. Checkpoints every 1000 steps mean partial results survive even if 9h limit is hit.
+Re-pushing the same slug creates a new version. Probability of T4 assignment is roughly 50%. Expect 1-3 re-pushes on average before getting T4. Each failed push takes ~2 minutes to detect (nvidia-smi runs immediately, exit(1) happens before any heavy pip installs).
 
 ---
 
