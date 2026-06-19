@@ -12,6 +12,7 @@ RUNS_DIR = Path(r"C:\Users\caleb\kaggle-runs")
 parser = argparse.ArgumentParser()
 parser.add_argument("--slug", required=True, help="Kernel slug (lowercase, hyphens only, max 50 chars)")
 parser.add_argument("--script", required=True, help="Path to the Python script to run")
+parser.add_argument("--gpu", default="NvidiaTeslaT4", help="GPU type: NvidiaTeslaT4 (default) or NvidiaTeslaP100")
 args = parser.parse_args()
 
 slug = args.slug.lower().replace(" ", "-")[:50]
@@ -44,6 +45,7 @@ meta = {
     "is_private": True,
     "enable_gpu": True,
     "enable_internet": True,
+    "machine_shape": args.gpu,
     "dataset_sources": [],
     "competition_sources": [],
     "kernel_sources": []

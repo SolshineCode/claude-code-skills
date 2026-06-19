@@ -53,7 +53,12 @@ C:\Users\caleb\kaggle-runs\<run-name>\
 
 **enable_internet: true** — required for HF Hub downloads (`huggingface-hub`, `transformers`, etc.).
 
-**GPU type:** Kaggle assigns T4 or P100 automatically when `enable_gpu: true`. You cannot request a specific GPU type on the free tier. Check `nvidia-smi` in your script to log what was assigned.
+**GPU type:** You CAN request a specific GPU type via `machine_shape` in the metadata. Valid values (from `kagglesdk`):
+- `"NvidiaTeslaT4"` — T4, sm_75, 15GB VRAM (default in push_kernel.py)
+- `"NvidiaTeslaP100"` — P100, sm_60, 16GB VRAM (avoid: incompatible with Python 3.12 + current PyTorch)
+- `"Tpu1VmV38"` — TPU v3-8
+
+Always specify `"machine_shape": "NvidiaTeslaT4"` — do not rely on random assignment. P100 is useless with Python 3.12 (see GPU Compatibility section).
 
 ---
 
