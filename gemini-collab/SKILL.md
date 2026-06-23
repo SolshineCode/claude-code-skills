@@ -96,7 +96,40 @@ python "${CLAUDE_SKILL_DIR}/scripts/gemini_client.py" \
   --engine agy --timeout 90
 ```
 
-The `agy` engine always runs with `--dangerously-skip-permissions` (required for non-interactive print mode) under a ConPTY. `--yolo`/`--sandbox` are accepted for API stability but ignored on this path. It's a prompt→response call; for agy file/command tool-use you'd drive `agy` interactively instead. One call per process — the helper spawns a fresh `agy` each time.
+The `agy` engine always runs with `--dangerously-skip-permissions` (required for non-interactive print mode) under a ConPTY. `--yolo`/`--sandbox` are accepted for API stability but ignored on this path. The `--engine agy` wrapper path is tuned for a SINGLE-TURN text answer (short idle cutoff). For a real multi-step AGENTIC run (download/parse/upload, file edits, shell), do NOT use the wrapper — call `agy_pty.py` directly with a high idle (see next section). One call per process — the helper spawns a fresh `agy` each time.
+
+### Running `agy` AGENTICALLY (multi-step tool-use) — verified 2026-06-22
+
+`agy --print "<task>" --dangerously-skip-permissions` is NOT just one text turn: it runs a full
+agentic loop (reads/writes files, runs shell commands, calls APIs) to completion, then exits.
+Earlier docs calling it "prompt→response only" were wrong.
+
+**The gotcha that truncates agentic runs:** `agy_pty.py`'s default `--idle 1` terminates `agy` as
+soon as its visible output stops growing for 1s. During a real task `agy` pauses output every time
+it executes a tool (a download, a parse) — so the idle cutoff kills it right after its first
+narration line (e.g. "I will start by listing the directory…"). That's why agentic runs looked
+like they "went agentic and returned nothing."
+
+**To drive a full agentic task to completion:**
+```bash
+# 1. Scoped, SMALL work dir with a task spec (never run agy from the home root).
+mkdir -p /c/Users/caleb/work/agy_job
+#    write /c/Users/caleb/work/agy_job/TASK.md with the full instructions + URLs + recipe.
+# 2. Put secrets in the ENV (inherited by the spawned agy) — NEVER inline them in the prompt/argv.
+export HF_TOKEN='...'; export PYTHONIOENCODING=utf-8 PYTHONUTF8=1
+# 3. Short prompt that points agy at TASK.md; HIGH --idle so tool pauses don't cut it off,
+#    HIGH --timeout as the hard cap. The loop exits naturally when agy finishes (pty.isalive()=False).
+echo "Read TASK.md in the current directory and carry out every step autonomously, end to end. Report what you did." \
+  | python "${CLAUDE_SKILL_DIR}/scripts/agy_pty.py" --idle 900 --timeout 3600 --cwd /c/Users/caleb/work/agy_job
+```
+
+Rules of thumb:
+- **Idle ≥ the longest expected tool pause** (downloads/parses): 600–900s is safe; the default 1s is only for single-turn text.
+- **Timeout = hard wall-clock cap** for the whole task (e.g. 3600s). Run it `run_in_background`.
+- **Prompt via a TASK.md file, not a giant argv string** — avoids Windows argv length limits and the helper's quote-neutralization mangling. Keep the stdin prompt to one line: "read TASK.md and execute."
+- **Secrets go in the environment**, never in the prompt (it's logged and embedded in argv).
+- **ALWAYS verify the result yourself afterward** (inspect the repo / files it touched). `agy` is Gemini 3.5 Flash — expect partial success on long autonomous chains; it may skip steps, hallucinate URLs, or stop early. Treat its final report as a claim to check, not ground truth.
+- This is powerful + autonomous (skip-permissions). Scope the work dir, give bounded instructions, and don't hand it destructive capability you wouldn't run yourself.
 
 ### Direct CLI (alternative):
 ```bash
