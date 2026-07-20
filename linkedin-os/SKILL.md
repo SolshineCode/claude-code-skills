@@ -22,6 +22,28 @@ Automated LinkedIn networking system with two campaign tracks. Uses Claude in Ch
 
 All paths use `~/.claude/linkedin-os/`. Create the directory and files if they don't exist.
 
+## Personal context (REQUIRED FIRST READ)
+
+This skill file is published in a PUBLIC repo and deliberately contains **no**
+personal details. Every placeholder below (`[EMPLOYER]`, `[VENTURE_A/B/C]`,
+`[VENUE]`, the voice profile, personal hooks, and current posting constraints)
+resolves from a private file:
+
+```
+<notepad-clone>/PERSONAL_CONTEXT.md      # e.g. ~/linkedin-os-notepad/PERSONAL_CONTEXT.md
+```
+
+**Read it at the start of every session, before drafting anything.** If the local
+clone is missing, clone the private notepad repo first. If the file cannot be read,
+say so and stop — do not guess at names, employers, ventures, or voice.
+
+`PERSONAL_CONTEXT.md` **overrides this file** wherever they disagree (it is kept
+current; this file's examples may be stale). In particular, check its "Posting
+constraints — CURRENT" section rather than trusting any constraint text here.
+
+**Never write personal values back into this file or any file under
+`~/.claude/skills/`** — they belong in the private notepad only.
+
 ## Logging to GitHub Notepad (Mandatory)
 
 **Every action taken in this skill MUST be logged to the `linkedin-os-notepad` repo.** After each session, commit and push all changes.
@@ -629,7 +651,7 @@ Run phases in this order:
 
 7. **Let it research broadly.** Comet excels at cross-platform research. It can check LinkedIn, X/Twitter, personal blogs, and company pages in a single task.
 
-8. **Delegate screening and analysis, not just navigation.** Comet can do much more than browse. Give it the full context of what you're trying to accomplish and let it make recommendations. For example, instead of "find their posts," say "find their posts, tell me which ones are relevant to my sectors (AI PropTech and biotech diagnostics), check for personal interests like Grateful Dead references, and recommend which 2-3 I should engage with first." Comet handles the analysis, Claude just reviews the recommendations.
+8. **Delegate screening and analysis, not just navigation.** Comet can do much more than browse. Give it the full context of what you're trying to accomplish and let it make recommendations. For example, instead of "find their posts," say "find their posts, tell me which ones are relevant to my sectors (see PERSONAL_CONTEXT.md), check for the personal-hook signals listed there, and recommend which 2-3 I should engage with first." Comet handles the analysis, Claude just reviews the recommendations.
 
 9. **One comprehensive prompt beats five small ones.** Combine the connection scan, content research, and partner analysis into a single detailed prompt. Comet keeps context across the whole task. Multiple small prompts lose context, waste time reconnecting, and risk input failures.
 
@@ -650,7 +672,7 @@ comet_ask (timeout: 120000): "Go to LinkedIn and search for my 1st-degree connec
 
 **Reading a profile + research:**
 ```
-comet_ask (timeout: 60000): "Research [Person Name] who is [Title] at [Company]. Check their LinkedIn profile, recent posts, and X/Twitter if they have one. Tell me: their headline, about section, recent posts (last 3), any shared connections, anything I could reference in a personalized message, and any signals of personal interests (especially Grateful Dead / Dead & Company / jam band culture, Sphere concert references, tie-dye imagery)."
+comet_ask (timeout: 60000): "Research [Person Name] who is [Title] at [Company]. Check their LinkedIn profile, recent posts, and X/Twitter if they have one. Tell me: their headline, about section, recent posts (last 3), any shared connections, anything I could reference in a personalized message, and any signals matching the personal-hook patterns from PERSONAL_CONTEXT.md."
 ```
 
 **Sending a connection request (with user-approved note):**
@@ -787,7 +809,7 @@ After drafting any outgoing text, self-review against these AI writing tells and
 
 ## Personal Hooks (from config `personal_hooks`)
 
-The config may contain `personal_hooks` — shared interests or cultural connections that create instant rapport. These are **the highest-value personalization angles** because they bypass professional small talk entirely.
+The private `PERSONAL_CONTEXT.md` (and optionally config `personal_hooks`) lists real shared interests or cultural connections that create instant rapport. These are **the highest-value personalization angles** because they bypass professional small talk entirely.
 
 **How to use personal hooks:**
 1. When researching a person (via Comet or Chrome), scan their profile and posts for signals that match any `personal_hooks[].how_to_spot` patterns
@@ -796,9 +818,9 @@ The config may contain `personal_hooks` — shared interests or cultural connect
 4. A shared passion creates a bond that purely professional connections can't match
 
 **When to deploy:**
-- **Connection request note**: If their profile has clear signals (e.g., Grateful Dead imagery, concert photos), lead with it. "Noticed the Steal Your Face — fellow Deadhead here. Caught Dead & Co at the Sphere last year. Would love to connect."
+- **Connection request note**: If their profile has clear signals matching a hook from `PERSONAL_CONTEXT.md`, lead with it. Shape: name the signal you spotted, state the shared interest plainly, add one specific true detail of your own, then ask to connect.
 - **Follow-up day 3**: If you connected professionally but discover the hook later, use it. "Scrolling your posts and saw [signal] — didn't realize you were into [topic] too! [Genuine comment or question]."
-- **VC engagement**: Especially powerful with VCs. Shared cultural identity (Deadhead, surfer, poker player, etc.) creates a "tribe" bond that accelerates trust far faster than professional rapport alone.
+- **VC engagement**: Especially powerful with VCs. A genuinely shared cultural identity creates a "tribe" bond that accelerates trust far faster than professional rapport alone.
 
 **Rules:**
 - Only use hooks that are **genuinely true** for the user — never fake shared interests
@@ -815,21 +837,24 @@ The config may contain `personal_hooks` — shared interests or cultural connect
 
 ## Content Posting Constraints
 
-**DO NOT post or publish any LinkedIn content about [VENTURE_A], [VENTURE_B], [VENTURE_C], or any business ventures.** The user's day job ([EMPLOYER]) has a clean IP assignment clause but office politics are messier than legal text. Avoid any public LinkedIn activity that makes side businesses visible to their employer.
+**These constraints are historical and may be superseded — check the "Posting
+constraints — CURRENT" section of `PERSONAL_CONTEXT.md` (private notepad) before
+applying any of them.** That file is authoritative; this text is context only.
 
-**Safe to post/share publicly:**
-- Published research ([THE USER'S PUBLIC PAPERS/PROJECTS])
-- Open source HuggingFace contributions
+Historical rule: do not post publicly about `[VENTURE_A]`, `[VENTURE_B]`,
+`[VENTURE_C]`, or fundraising, to keep ventures invisible to `[EMPLOYER]`.
+
+Generally safe to post/share publicly:
+- Published research and open-source contributions
 - General mech interp / SAE / AI safety commentary
 - Reactions to others' research
 
-**Keep private (DMs and comments only, no standalone posts):**
-- [VENTURE_B] / [VENTURE_A] ([VENTURE_DESCRIPTION])
-- [VENTURE_C] ([VENTURE_DESCRIPTION])
-- Fundraising activity
-- Cofounder/CTO role
+Generally keep to DMs and comments rather than standalone posts:
+- Venture specifics, fundraising activity, cofounder/CTO role
 
-**VC engagement is fine** because commenting on a VC's post from a "founder perspective" is low-profile. It's one comment in a thread, not a broadcast. But never create a standalone post announcing ventures or fundraising.
+VC engagement is fine: commenting on a VC's post from a founder perspective is one
+comment in a thread, not a broadcast. Never create a standalone post announcing
+ventures or fundraising without checking the current constraints first.
 
 ## Important Notes
 
