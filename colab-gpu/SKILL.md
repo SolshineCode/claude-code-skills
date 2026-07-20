@@ -10,7 +10,7 @@ This skill is fully autonomous. **Do not ask the user to open Chrome, connect a 
 
 ## ⛔ CRITICAL RULES — read before doing anything (hard-won 2026-06-17)
 
-1. **ACCOUNT IS A HARD GATE.** Colab/Drive must run as **caleb.deleeuw@gmail.com** and NEVER any other Google account. Verify the *rendered* account (Step 0.5) **before** opening any notebook AND again right before running any cell. If it is not caleb.deleeuw@gmail.com, STOP and switch — never proceed "hoping it's right." This has gone wrong repeatedly; treat a wrong account as a blocking failure, not a warning.
+1. **ACCOUNT IS A HARD GATE.** Colab/Drive must run as **<YOUR_GOOGLE_ACCOUNT>** and NEVER any other Google account. Verify the *rendered* account (Step 0.5) **before** opening any notebook AND again right before running any cell. If it is not <YOUR_GOOGLE_ACCOUNT>, STOP and switch — never proceed "hoping it's right." This has gone wrong repeatedly; treat a wrong account as a blocking failure, not a warning.
 
 2. **NEVER call `open_colab_browser_connection` synchronously while the Colab frontend is NOT yet connected.** It is a *blocking* call that is supposed to time out at 60 s but in practice can hang the entire Claude session for HOURS (observed: 1h57m). The ONLY safe time to call it is *after* you have already driven a controlled tab to the magic URL and clicked Accept — then it returns `true` instantly. See Step 3 for the non-hanging protocol. If you ever see "Waiting for user to connect in Colab - will wait for 60s" sitting for more than ~90 s, the call is hung — it must be interrupted.
 
@@ -20,7 +20,7 @@ This skill is fully autonomous. **Do not ask the user to open Chrome, connect a 
 
 The colab-mcp connection CAN be established with zero human steps using a **background sub-agent to hold the blocking call** (the deadlock was: the connect tool must be in-flight for the handshake, but it hangs the caller — so run it in a backgrounded Agent). The command-palette token paste is NOT needed when you drive the magic-URL frontend tab yourself. Exact recipe that worked end-to-end (connected, added a cell, ran it, read clean output):
 
-1. **Account gate** (Step 0.5): controlled tab on Colab as caleb.deleeuw@gmail.com (`?authuser=1` here).
+1. **Account gate** (Step 0.5): controlled tab on Colab as <YOUR_GOOGLE_ACCOUNT> (`?authuser=1` here).
 2. **Select T4 GPU runtime BEFORE connecting anything** (order matters: changing the runtime type *after* the MCP is connected restarts the kernel and DROPS the MCP — redo required). ✅ **Fully automatable (verified 2026-06-17, got Tesla T4)** — see "Autonomously selecting T4" below. The whole trick: Colab `goog` menu buttons open on **mousedown+mouseup**, NOT `.click()`/ref-click; the accelerator is an `mwc-radio` with `value="GPU,T4"` in shadow DOM; Save is a real dialog button (`find`→ref click works). Do this FIRST so the runtime is T4 before the MCP handshake.
 3. **Trigger capture**: `rm` the capture file, call `open_colab_browser_connection` ONCE to fire `webbrowser.open_new` and write `colab_mcp_url.txt` (it then hangs — fine, you'll background the real one). Read the token+port from the file.
 4. **Connect the (T4) runtime** (kernel must be live or the proxy never completes): `document.querySelector('colab-connect-button').shadowRoot.querySelector('#connect').click()`, wait ~25 s for "Connected".
@@ -57,7 +57,7 @@ Do all of this via `javascript_tool` (the dialog is `mwc-dialog` + Material web 
 
 ### Verified findings (2026-06-17 live run) — trust these over older text below
 - **Capture WORKS** with the absolute-python `BROWSER` env (got a real token). The earlier "capture never fired" was bare-`python`-not-on-PATH.
-- **Account:** on this machine `?authuser=1` = caleb.deleeuw@gmail.com (index 0 = the WRONG `cl8.dl8.888@gmail.com`). `?authuser=<email>` was IGNORED; probe by index and match the email. **Carry `?authuser=1` in EVERY Colab URL, including the magic URL** (`…/empty.ipynb?authuser=1#mcpProxyToken=…`) or it reverts to the wrong account.
+- **Account:** on this machine `?authuser=1` = <YOUR_GOOGLE_ACCOUNT> (index 0 = the WRONG `<A_DIFFERENT_SIGNED_IN_ACCOUNT>`). `?authuser=<email>` was IGNORED; probe by index and match the email. **Carry `?authuser=1` in EVERY Colab URL, including the magic URL** (`…/empty.ipynb?authuser=1#mcpProxyToken=…`) or it reverts to the wrong account.
 - **Runtime connect:** the `find`→ref click and raw-coordinate clicks MISSED (dpr). What worked: JS shadow-DOM click — `document.querySelector('colab-connect-button').shadowRoot.querySelector('#connect').click()`. Wait ~20–30 s; "Connected" when `shadowRoot` text contains "Connected" (RAM/Disk text is in a child element).
 - **colab-mcp connect: NOT an Accept button.** The fully-automated path (magic-URL frontend + background-agent connect) needs no dialog and IS confirmed end-to-end headless. The command-palette token paste (Step 3b) is only a manual fallback.
 - **`open_colab_browser_connection` still hangs** despite `MCP_TOOL_TIMEOUT=90000` (progress messages defeat the idle timeout) — observed 11 min. Only call it once the frontend is already connected.
@@ -83,7 +83,7 @@ If ToolSearch returns "No matching deferred tools found" for colab-mcp, the MCP 
 
 ## Step 0.5: Verify Google Account — HARD GATE (do not skip, do not proceed on failure)
 
-Colab must run as **caleb.deleeuw@gmail.com**. Chrome is signed into multiple accounts and defaults to the wrong one. This step is a gate: you may not move to Step 1 until the active account is verified to be caleb.deleeuw@gmail.com.
+Colab must run as **<YOUR_GOOGLE_ACCOUNT>**. Chrome is signed into multiple accounts and defaults to the wrong one. This step is a gate: you may not move to Step 1 until the active account is verified to be <YOUR_GOOGLE_ACCOUNT>.
 
 **Why this keeps failing:** the account index (`authuser=N`) is NOT stable across sessions, so hardcoding `authuser=0` is unreliable. The robust method is: read the *actual rendered* account email, and switch by matching the email text — never assume.
 
@@ -94,19 +94,19 @@ Colab must run as **caleb.deleeuw@gmail.com**. Chrome is signed into multiple ac
    const btn = document.querySelector('a[aria-label*="@"], [aria-label*="Google Account"]');
    (btn && btn.getAttribute('aria-label')) || document.body.innerText.match(/[\w.+-]+@gmail\.com/)?.[0] || 'UNKNOWN'
    ```
-3. **If it shows `caleb.deleeuw@gmail.com` → proceed to Step 1.**
+3. **If it shows `<YOUR_GOOGLE_ACCOUNT>` → proceed to Step 1.**
 4. **If it shows any other account or UNKNOWN → switch (do NOT proceed):**
-   - Try forcing the account by email in the URL first: navigate to `https://colab.research.google.com/?authuser=caleb.deleeuw@gmail.com`, then re-run step 2 to confirm. Google honors `authuser=<email>` when that account is signed in.
-   - If still wrong, click the account avatar (top-right) to open the switcher, screenshot, and click the row whose text is exactly `caleb.deleeuw@gmail.com`. Then re-verify.
-   - To discover the right index deterministically, probe `?authuser=0`, `?authuser=1`, `?authuser=2` and read the rendered email after each; use the one that resolves to caleb.deleeuw@gmail.com.
-   - If that account isn't signed in at all: open the sign-in page and tell the user "Please sign into caleb.deleeuw@gmail.com in the Chrome tab, then tell me when done" — **do NOT enter credentials yourself** (prohibited).
+   - Try forcing the account by email in the URL first: navigate to `https://colab.research.google.com/?authuser=<YOUR_GOOGLE_ACCOUNT>`, then re-run step 2 to confirm. Google honors `authuser=<email>` when that account is signed in.
+   - If still wrong, click the account avatar (top-right) to open the switcher, screenshot, and click the row whose text is exactly `<YOUR_GOOGLE_ACCOUNT>`. Then re-verify.
+   - To discover the right index deterministically, probe `?authuser=0`, `?authuser=1`, `?authuser=2` and read the rendered email after each; use the one that resolves to <YOUR_GOOGLE_ACCOUNT>.
+   - If that account isn't signed in at all: open the sign-in page and tell the user "Please sign into <YOUR_GOOGLE_ACCOUNT> in the Chrome tab, then tell me when done" — **do NOT enter credentials yourself** (prohibited).
 5. **Re-verify the account again right before running any cell** (Step 4) — a runtime reconnect or new tab can silently land on the wrong account.
 
 ## Step 1: Find or Open a Colab Notebook
 
 Call `mcp__claude-in-chrome__tabs_context_mcp` to check open tabs.
 
-- If a tab already shows `colab.research.google.com` **and** the account is `caleb.deleeuw@gmail.com`, use it.
+- If a tab already shows `colab.research.google.com` **and** the account is `<YOUR_GOOGLE_ACCOUNT>`, use it.
 - Otherwise navigate the current tab to `https://colab.research.google.com/`.
 
 When the notebook picker appears, open an existing notebook (e.g., "scratchpad") rather than creating a new one — creating a new notebook requires Drive storage quota, which may be full. Click an existing recent notebook.
@@ -176,7 +176,7 @@ The "Connect to a local Colab MCP server / Accept" prompt is Colab asking permis
 The fix is to redirect `webbrowser.open_new` to **capture the magic URL to a file** instead of opening an uncontrollable tab, so you can navigate your *controlled* group tab to it. This is configured once in `~/.claude.json` by adding to the `colab-mcp` server's `env`:
 
 ```json
-"env": { "BROWSER": "C:/Python314/python C:/Users/caleb/.claude/colab_url_capture.py %s" }
+"env": { "BROWSER": "C:/Python314/python %USERPROFILE%/.claude/colab_url_capture.py %s" }
 ```
 
 with capture script `~/.claude/colab_url_capture.py`:
@@ -184,7 +184,7 @@ with capture script `~/.claude/colab_url_capture.py`:
 ```python
 import sys
 url = sys.argv[1] if len(sys.argv) > 1 else "NOURL"
-open(r"C:\Users\caleb\.claude\colab_mcp_url.txt", "w", encoding="utf-8").write(url)
+open(r"%USERPROFILE%\.claude\colab_mcp_url.txt", "w", encoding="utf-8").write(url)
 ```
 
 **Two critical gotchas (both verified 2026-06-17):**
@@ -194,13 +194,13 @@ open(r"C:\Users\caleb\.claude\colab_mcp_url.txt", "w", encoding="utf-8").write(u
 
 Verify setup exists (checks both scopes): 
 ```bash
-python -c "import json; c=json.load(open(r'C:/Users/caleb/.claude.json')); print('top:', (c.get('mcpServers',{}).get('colab-mcp') or {}).get('env')); [print(p, (pc.get('mcpServers',{}).get('colab-mcp') or {}).get('env')) for p,pc in c.get('projects',{}).items() if (pc.get('mcpServers') or {}).get('colab-mcp')]"
+python -c "import json; c=json.load(open(r'%USERPROFILE%/.claude.json')); print('top:', (c.get('mcpServers',{}).get('colab-mcp') or {}).get('env')); [print(p, (pc.get('mcpServers',{}).get('colab-mcp') or {}).get('env')) for p,pc in c.get('projects',{}).items() if (pc.get('mcpServers') or {}).get('colab-mcp')]"
 ```
 If missing, add it (Python: load JSON, set `env` on each colab-mcp scope, dump) and tell the user to restart Claude Code once.
 
 **Confirm the capture actually works after restart, BEFORE relying on it** (independent of the hang-prone tool): run the exact command webbrowser would run —
 ```bash
-"C:/Python314/python" "C:/Users/caleb/.claude/colab_url_capture.py" "TESTURL" && cat C:/Users/caleb/.claude/colab_mcp_url.txt   # must print TESTURL
+"C:/Python314/python" "%USERPROFILE%/.claude/colab_url_capture.py" "TESTURL" && cat %USERPROFILE%/.claude/colab_mcp_url.txt   # must print TESTURL
 ```
 That proves the script+path; the env-reaching-the-subprocess part is only testable post-restart via Step 3a.
 
@@ -211,9 +211,9 @@ That proves the script+path; the env-reaching-the-subprocess part is only testab
 ⚠ **`MCP_TOOL_TIMEOUT` does NOT reliably bound this call (verified 2026-06-17).** It is set to 90000 in `settings.json`, and the *first* call of a session did abort at 90 s — but a later call **hung 11+ minutes** before the user killed it. The tool streams `report_progress` ("Waiting for user to connect…") notifications, and those appear to reset/defeat the idle timeout. **Therefore: NEVER call `open_colab_browser_connection` as a way to *wait* for a connection.** The only safe time to call it is AFTER the frontend is already connected (Step 3c), when it returns instantly. To merely *trigger the capture*, you still have to make one call — make it ONCE, watch the capture file appear within ~1–2 s, and be ready for the user to interrupt it (it will not return on its own). This is exactly why Step 3-ALT (no colab-mcp) is the recommended default.
 
 ```
-Bash: rm -f C:/Users/caleb/.claude/colab_mcp_url.txt
+Bash: rm -f %USERPROFILE%/.claude/colab_mcp_url.txt
 mcp__colab-mcp__open_colab_browser_connection      # aborts at MCP_TOOL_TIMEOUT (~90s) or returns false; capture file already written
-Bash: cat C:/Users/caleb/.claude/colab_mcp_url.txt  # must contain the real magic URL; if EMPTY/missing, capture is broken → do NOT retry the hang-prone call, fix capture (3a-setup) or use Step 3-ALT
+Bash: cat %USERPROFILE%/.claude/colab_mcp_url.txt  # must contain the real magic URL; if EMPTY/missing, capture is broken → do NOT retry the hang-prone call, fix capture (3a-setup) or use Step 3-ALT
 ```
 
 If the capture file is empty/missing after this call, the BROWSER env never fired in the server subprocess (absolute-python-path or restart issue, see setup above). Stop here — repeating the call just risks another multi-hour hang. Fix the env and restart, or switch to Step 3-ALT.
@@ -268,7 +268,7 @@ Use these MCP notebook tools for all cell interactions — do NOT click cells ma
 
 When colab-mcp's capture isn't confirmed working, or you simply want zero hang/Accept/token risk, **skip Step 3 entirely** and operate the notebook through claude-in-chrome. There is no localhost websocket, no Accept dialog, no blocking tool, no MCP-server dependency — so nothing can hang the session or require a human mid-run. Trade-off: cell I/O is via the DOM rather than a clean API, so it's a bit more verbose, but it is reliable.
 
-**Account gate still applies** (Step 0.5) — verify caleb.deleeuw@gmail.com first.
+**Account gate still applies** (Step 0.5) — verify <YOUR_GOOGLE_ACCOUNT> first.
 
 - **Write code into a cell**: focus the last code cell and type. Find the cell input with `find` ("code cell input area") or JS; click it, then:
   ```
@@ -388,7 +388,7 @@ If the session is forcibly disconnected mid-run, reconnect (Step 2–3), check D
 |---------|-----|
 | `open_colab_browser_connection` returns false | JS poller didn't click Accept in time; retry the parallel JS+MCP call pair once |
 | colab-mcp tool unavailable / server disconnected | Server exited after failed attempt — tell user to restart Claude Code; resume from Step 0 |
-| Wrong Google account on Colab | Navigate to accounts.google.com, switch to caleb.deleeuw@gmail.com, then reload Colab |
+| Wrong Google account on Colab | Navigate to accounts.google.com, switch to <YOUR_GOOGLE_ACCOUNT>, then reload Colab |
 | Runtime won't connect after 90s | Take a screenshot, check for Google sign-in prompt; if signed into wrong account, do account switch |
 | T4 not available dialog | Accept the offered GPU, log actual type from `nvidia-smi`, continue |
 | CUDA OOM mid-run | Add `torch.cuda.empty_cache()` before the OOM step; reduce batch size by 50%; rerun from last checkpoint |

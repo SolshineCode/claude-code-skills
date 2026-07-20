@@ -4,8 +4,8 @@ This skill is **fully autonomous and headless** — no browser, no MCP bridge, n
 
 ## Credentials & Setup (already done)
 
-- **kaggle.json**: `C:\Users\caleb\.kaggle\kaggle.json`
-- **Username**: `calebdeleeuw`
+- **kaggle.json**: `%USERPROFILE%\.kaggle\kaggle.json`
+- **Username**: `<KAGGLE_USERNAME>`
 - **CLI invocation**: always use `python -m kaggle` (bare `kaggle` is not on PATH)
 - **GPU quota**: ~30 GPU-hours/week (resets weekly), shared across T4/P100
 
@@ -21,10 +21,10 @@ All steps are pure CLI/API — no Chrome automation needed.
 
 ## Step 1: Prepare the Kernel Directory
 
-Create a local staging directory (e.g. `C:\Users\caleb\kaggle-runs\<run-name>\`):
+Create a local staging directory (e.g. `%USERPROFILE%\kaggle-runs\<run-name>\`):
 
 ```
-C:\Users\caleb\kaggle-runs\<run-name>\
+%USERPROFILE%\kaggle-runs\<run-name>\
   script.py              # the training/eval script
   kernel-metadata.json   # kernel config
 ```
@@ -33,7 +33,7 @@ C:\Users\caleb\kaggle-runs\<run-name>\
 
 ```json
 {
-  "id": "calebdeleeuw/<slug>",
+  "id": "<KAGGLE_USERNAME>/<slug>",
   "title": "<slug>",
   "code_file": "script.py",
   "language": "python",
@@ -106,14 +106,14 @@ print("DONE. Saved to /kaggle/working/")
 
 ## Step 3: Push the Kernel
 
-Use the helper script `C:\Users\caleb\.claude\skills\kaggle-gpu\push_kernel.py` or run directly:
+Use the helper script `%USERPROFILE%\.claude\skills\kaggle-gpu\push_kernel.py` or run directly:
 
 ```powershell
 # Set HF token as env var (injected into the kernel's environment secrets via API)
 $env:HF_TOKEN = "hf_YOUR_TOKEN_HERE"
 
 # Push — this QUEUES the run (returns immediately, does not block)
-python -m kaggle kernels push -p "C:\Users\caleb\kaggle-runs\<run-name>"
+python -m kaggle kernels push -p "%USERPROFILE%\kaggle-runs\<run-name>"
 ```
 
 **Important:** `kaggle kernels push` returns immediately after queuing. The run starts within ~1–5 minutes depending on GPU availability. Do NOT wait for it inline — proceed to Step 4.
@@ -136,7 +136,7 @@ Then in the push helper, sed-replace `INJECT_HF_TOKEN` with the real token befor
 Poll every 60–120 seconds (minimum). For runs expected to take 30+ min, set a CronCreate timer.
 
 ```powershell
-python -m kaggle kernels status calebdeleeuw/<slug>
+python -m kaggle kernels status <KAGGLE_USERNAME>/<slug>
 ```
 
 **Status values:**
@@ -150,7 +150,7 @@ python -m kaggle kernels status calebdeleeuw/<slug>
 
 ```powershell
 while ($true) {
-    $s = python -m kaggle kernels status calebdeleeuw/<slug> 2>&1
+    $s = python -m kaggle kernels status <KAGGLE_USERNAME>/<slug> 2>&1
     Write-Host $s
     if ($s -match "complete|error|cancel") { break }
     Start-Sleep 60
@@ -164,7 +164,7 @@ For long runs (30+ min), use CronCreate with a reasonable estimate rather than p
 ## Step 5: Download Outputs
 
 ```powershell
-python -m kaggle kernels output calebdeleeuw/<slug> -p "C:\Users\caleb\kaggle-runs\<run-name>\output\"
+python -m kaggle kernels output <KAGGLE_USERNAME>/<slug> -p "%USERPROFILE%\kaggle-runs\<run-name>\output\"
 ```
 
 This downloads all files from `/kaggle/working/` to the local output path. Typical outputs: checkpoints (`.pt`), logs (`.jsonl`), metrics (`.json`).
@@ -184,7 +184,7 @@ python -c "
 from huggingface_hub import HfApi
 import os
 api = HfApi(token=os.environ['HF_TOKEN'])
-api.upload_folder(folder_path='C:/Users/caleb/kaggle-runs/<run-name>/output', repo_id='Solshine/<repo-name>', repo_type='model')
+api.upload_folder(folder_path='%USERPROFILE%/kaggle-runs/<run-name>/output', repo_id='<HF_ORG>/<repo-name>', repo_type='model')
 print('Uploaded to HF')
 "
 ```
@@ -298,6 +298,6 @@ This pulls the latest HEAD and takes ~60s. Required for any model added to HF Hu
 | GPU quota | ~30h/week | ~4h/day |
 | Max session | 9h | ~12h |
 | Headless | **Fully** | Partially |
-| Account gate | Not needed | Hard gate (caleb.deleeuw@gmail.com) |
+| Account gate | Not needed | Hard gate (<YOUR_GOOGLE_ACCOUNT>) |
 
 Use Kaggle when Colab GPU quota is exhausted or for unattended overnight runs.

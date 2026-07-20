@@ -6,8 +6,8 @@ import argparse, json, os, shutil, subprocess, sys
 from pathlib import Path
 
 HF_TOKEN = os.environ.get("HF_TOKEN", "")
-KAGGLE_USER = "calebdeleeuw"
-RUNS_DIR = Path(r"C:\Users\caleb\kaggle-runs")
+KAGGLE_USER = "<KAGGLE_USERNAME>"
+RUNS_DIR = Path.home() / "kaggle-runs"
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--slug", required=True, help="Kernel slug (lowercase, hyphens only, max 50 chars)")

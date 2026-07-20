@@ -21,7 +21,7 @@ You have been granted a block of GPU time. Your job is to keep the GPU doing use
 
 ## Phase 1: Job Priority
 
-Work from the highest-priority available job. Check the project's CLAUDE.md for its specific priority queue. For BioRefusalAudit (`C:\Users\caleb\projects\Deleeuw-AI-x-Bio-hackathon`):
+Work from the highest-priority available job. Check the project's CLAUDE.md for its specific priority queue. For BioRefusalAudit (`%USERPROFILE%\projects\<PROJECT_DIR>`):
 
 1. Cross-model format ablations
 2. Longer SAE training runs
