@@ -184,7 +184,7 @@ python -c "
 from huggingface_hub import HfApi
 import os
 api = HfApi(token=os.environ['HF_TOKEN'])
-api.upload_folder(folder_path='%USERPROFILE%/kaggle-runs/<run-name>/output', repo_id='Solshine/<repo-name>', repo_type='model')
+api.upload_folder(folder_path='%USERPROFILE%/kaggle-runs/<run-name>/output', repo_id='<HF_ORG>/<repo-name>', repo_type='model')
 print('Uploaded to HF')
 "
 ```

@@ -769,13 +769,13 @@ After drafting any outgoing text, self-review against these AI writing tells and
 - A real person might say "super cool" or "really interesting", not "profoundly insightful"
 - Natural filler words occasionally ("honestly", "actually", "essentially", "btw"), but not overdone
 
-### the user's voice (learned from his own edits):
+### The user's voice (learned from their own edits):
 - Uses "I saw" not just "saw". Includes the subject pronoun naturally.
 - Uses filler words like "essentially" that ground the message as conversational
-- Claims achievements directly with venue names ("I had published in AAAI last year") rather than hedging ("if you've come across that one"). Confidence, not false modesty.
+- Claims achievements directly with venue names ("I had published in [VENUE] last year") rather than hedging ("if you've come across that one"). Confidence, not false modesty.
 - Breaks sentences with periods, not commas or em dashes. Short and declarative.
-- Confident without being salesy. States what he's doing, doesn't oversell it.
-- "Super cool" is natural for him. Casual praise, not formal compliments.
+- Confident without being salesy. States what they're doing, doesn't oversell it.
+- "Super cool" is natural for them. Casual praise, not formal compliments.
 
 ### Self-review process:
 1. Draft the message
@@ -815,17 +815,17 @@ The config may contain `personal_hooks` — shared interests or cultural connect
 
 ## Content Posting Constraints
 
-**DO NOT post or publish any LinkedIn content about [VENTURE_A], [VENTURE_B], [VENTURE_C], or any business ventures.** the user's day job ([EMPLOYER]) has a clean IP assignment clause but office politics are messier than legal text. Avoid any public LinkedIn activity that makes side businesses visible to his employer.
+**DO NOT post or publish any LinkedIn content about [VENTURE_A], [VENTURE_B], [VENTURE_C], or any business ventures.** The user's day job ([EMPLOYER]) has a clean IP assignment clause but office politics are messier than legal text. Avoid any public LinkedIn activity that makes side businesses visible to their employer.
 
 **Safe to post/share publicly:**
-- Published research (AAAI paper, nanochat-SAE)
+- Published research ([THE USER'S PUBLIC PAPERS/PROJECTS])
 - Open source HuggingFace contributions
 - General mech interp / SAE / AI safety commentary
 - Reactions to others' research
 
 **Keep private (DMs and comments only, no standalone posts):**
-- [VENTURE_B] / [VENTURE_A] (voice AI for real estate)
-- [VENTURE_C] (biotech diagnostics)
+- [VENTURE_B] / [VENTURE_A] ([VENTURE_DESCRIPTION])
+- [VENTURE_C] ([VENTURE_DESCRIPTION])
 - Fundraising activity
 - Cofounder/CTO role
 

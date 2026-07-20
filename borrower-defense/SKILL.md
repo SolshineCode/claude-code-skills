@@ -13,7 +13,7 @@ This skill was built from a real, successful application session. It handles the
 
 ## Prerequisites
 
-- **Gemini CLI** must be installed and authenticated (`gemini --yolo` must work). This is used for Gmail evidence gathering. The user should have already run `gemini` interactively once to complete Google OAuth.
+- **Antigravity CLI (`agy`)** must be installed and authenticated (the legacy `gemini` CLI is deprecated and login-blocked as of 2026-07). Used for Gmail evidence gathering. The user should have already run `agy` interactively once to complete Google OAuth.
 - **Claude in Chrome** browser extension for navigating StudentAid.gov portal
 - **ffmpeg** for audio compression (will install via `winget install ffmpeg` if missing)
 - User must have an FSA ID (Federal Student Aid account) at StudentAid.gov
@@ -95,19 +95,15 @@ Save all intake notes to `~/Downloads/BDTR_Submission/intake_notes.txt`.
 
 ### Phase 2: Evidence Gathering
 
-#### 2a: Gmail Evidence (via Gemini CLI)
+#### 2a: Gmail Evidence (via Antigravity CLI)
 
-Use the `/gemini-collab` skill to search the user's Gmail for evidence. Gemini CLI has Gmail API access when run with `--yolo`.
+Use the `/gemini-collab` skill to search the user's Gmail for evidence. The Antigravity agent has Gmail access when the account's Google integrations are authorized.
 
 ```bash
-python "%USERPROFILE%/.claude/skills/gemini-collab/scripts/gemini_client.py" \
-  --prompt "Search my Gmail for emails related to '[SCHOOL NAME]' OR '[KEY PEOPLE]' OR 'disability' OR 'accommodations' OR 'complaint' OR 'grievance'. For each email found, save the full Date, From, To, Subject, and complete body text as individual files in [OUTPUT_DIR]/email_evidence/. Name files descriptively." \
-  --yolo \
-  --cwd "[OUTPUT_DIR]" \
-  --timeout 300
+cd "[OUTPUT_DIR]" && timeout 300 agy -p "Search my Gmail for emails related to '[SCHOOL NAME]' OR '[KEY PEOPLE]' OR 'disability' OR 'accommodations' OR 'complaint' OR 'grievance'. For each email found, save the full Date, From, To, Subject, and complete body text as individual files in email_evidence/. Name files descriptively." --dangerously-skip-permissions
 ```
 
-**Important:** Gemini's Gmail integration requires prior authentication via `gemini` CLI interactive mode. If exit code 41, tell user to run `! gemini` to authenticate first.
+**Important:** Gmail integration requires prior interactive authentication. If access is denied, tell the user to run `! agy` and authorize Gmail access first.
 
 **Be selective about evidence.** Only include emails that directly support the claim:
 - Correspondence with disability/accommodation offices
