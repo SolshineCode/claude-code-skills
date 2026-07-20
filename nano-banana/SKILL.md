@@ -1,12 +1,18 @@
 ---
 name: nano-banana
-description: REQUIRED for all image generation requests. Generate and edit images using Nano Banana (Gemini CLI). Handles blog featured images, YouTube thumbnails, icons, diagrams, patterns, illustrations, photos, visual assets, graphics, artwork, pictures. Use this skill whenever the user asks to create, generate, make, draw, design, or edit any image or visual content.
-allowed-tools: Bash(gemini:*)
+description: REQUIRED for all image generation requests. Generate and edit images using Nano Banana (Gemini image generation) via the Antigravity CLI (agy). Handles blog featured images, YouTube thumbnails, icons, diagrams, patterns, illustrations, photos, visual assets, graphics, artwork, pictures. Use this skill whenever the user asks to create, generate, make, draw, design, or edit any image or visual content.
+allowed-tools: Bash(agy:*)
 ---
 
-# Nano Banana Image Generation
+# Nano Banana Image Generation (via Antigravity CLI)
 
-Generate professional images via the Gemini CLI's nanobanana extension.
+Generate professional images through Google's Antigravity CLI (`agy`), whose agent
+sessions carry a native Nano Banana / Gemini image-generation tool.
+
+> **History (2026-07-19):** the standalone Gemini CLI (`gemini`) and its nanobanana
+> extension are deprecated and login-blocked — Google requires Antigravity now. Do NOT
+> install or invoke `gemini`; every command below uses `agy`. The workflow was
+> validated end-to-end on 2026-07-19.
 
 ## When to Use This Skill
 
@@ -21,130 +27,112 @@ Do NOT attempt to generate images through any other method.
 
 ## Before First Use
 
-1. Verify extension is installed:
+1. Verify the CLI is present and authenticated:
    ```bash
-   gemini extensions list | grep nanobanana
+   agy --help >/dev/null && agy models
    ```
-2. If missing, install it:
-   ```bash
-   gemini extensions install https://github.com/gemini-cli-extensions/nanobanana
-   ```
-3. Verify API key is set:
-   ```bash
-   [ -n "$GEMINI_API_KEY" ] && echo "API key configured" || echo "Missing GEMINI_API_KEY"
-   ```
+   A model list (Gemini 3.5 Flash, Gemini 3.1 Pro, ...) means auth is good. If it
+   prompts for login instead, stop and ask the user to run `agy` interactively once.
+2. No API key or extension install is needed — the image tool ships with agy.
 
-## Command Selection
+## Core Invocation
 
-| User Request | Command |
-|--------------|---------|
-| "make me a blog header" | `/generate` |
-| "create an app icon" | `/icon` |
-| "draw a flowchart of..." | `/diagram` |
-| "fix this old photo" | `/restore` |
-| "remove the background" | `/edit` |
-| "create a repeating texture" | `/pattern` |
-| "make a comic strip" | `/story` |
+Headless one-shot generation:
 
-## Available Commands
+```bash
+timeout 300 agy -p "Use your native image-generation tool to generate: <PROMPT>. Save the result as <NAME>.png" \
+  --model "Gemini 3.5 Flash (Low)" \
+  --dangerously-skip-permissions
+```
 
-**Note:** Always use the `--yolo` flag to automatically approve all tool actions.
+- `-p/--print` runs non-interactively. In print mode agy auto-denies tool permission
+  prompts, so `--dangerously-skip-permissions` (or pre-configured allow-rules in agy's
+  settings.json) is required — without it the run exits with "a tool required the
+  command permission".
+- Give every image an explicit, unique `<NAME>.png` so you can find it afterward.
+- Generation takes on the order of 30–90 seconds per image; keep the `timeout`.
 
-| Command | Use Case |
-|---------|----------|
-| `gemini --yolo "/generate 'prompt'"` | Text-to-image generation |
-| `gemini --yolo "/edit file.png 'instruction'"` | Modify existing image |
-| `gemini --yolo "/restore old_photo.jpg 'fix scratches'"` | Repair damaged photos |
-| `gemini --yolo "/icon 'description'"` | App icons, favicons, UI elements |
-| `gemini --yolo "/diagram 'description'"` | Flowcharts, architecture diagrams |
-| `gemini --yolo "/pattern 'description'"` | Seamless textures and patterns |
-| `gemini --yolo "/story 'description'"` | Sequential/narrative images |
-| `gemini --yolo "/nanobanana prompt"` | Natural language interface |
+## Output Location — READ THIS, IT IS THE #1 GOTCHA
 
-## Common Options
+agy IGNORES your working directory. Nothing appears in `./` or `./nanobanana-output/`,
+and agy's own reply may falsely claim it saved to the current directory. The real
+files land in agy's sandbox:
 
-- `--yolo` - **Required.** Auto-approve all tool actions (no confirmation prompts)
-- `--count=N` - Generate N variations (1-8)
-- `--preview` - Auto-open generated images
-- `--styles="style1,style2"` - Apply artistic styles
-- `--format=grid|separate` - Output arrangement
+| What | Path |
+|---|---|
+| Final image (converted to your requested name/format) | `~/.gemini/antigravity-cli/scratch/<NAME>.png` |
+| Raw generator output(s) | `~/.gemini/antigravity-cli/brain/<session-uuid>/<NAME>_<ms-epoch>.jpg` |
 
-## Common Sizes
+After every run, collect and verify — never trust the text reply alone:
 
-| Use Case | Dimensions | Notes |
-|----------|------------|-------|
-| YouTube thumbnail | 1280x720 | `--aspect=16:9` |
-| Blog featured image | 1200x630 | Social preview friendly |
-| Square social | 1080x1080 | Instagram, LinkedIn |
-| Twitter/X header | 1500x500 | Wide banner |
-| Vertical story | 1080x1920 | `--aspect=9:16` |
+```bash
+ls -t ~/.gemini/antigravity-cli/scratch/ | head -3
+cp ~/.gemini/antigravity-cli/scratch/<NAME>.png <project-destination>/
+file <project-destination>/<NAME>.png   # confirm real PNG + dimensions
+```
+
+If the scratch dir is empty, also check the newest `brain/<session-uuid>/` directory
+for the raw JPG before declaring failure.
+
+## Editing an Existing Image
+
+Pass the absolute input path inside the prompt (agy can read local files):
+
+```bash
+timeout 300 agy -p "Load /abs/path/to/input.png and use your image tool to <INSTRUCTION>. Save the result as <NAME>_edited.png" \
+  --model "Gemini 3.5 Flash (Low)" \
+  --dangerously-skip-permissions
+```
+
+(Editing is the same pipeline but was not part of the 2026-07-19 validation — verify
+the output file with extra care.)
 
 ## Model Selection
 
-Default: `gemini-2.5-flash-image` (~$0.04/image)
+`--model` selects the *agent* model that drives the session, not the image model
+itself (the image tool is Nano Banana under the hood either way).
 
-For higher quality (4K, better reasoning):
-```bash
-export NANOBANANA_MODEL=gemini-3-pro-image-preview
-```
+- Default: `"Gemini 3.5 Flash (Low)"` — cheap, validated.
+- If prompt-following on complex compositions is poor, retry with
+  `"Gemini 3.1 Pro (High)"`.
 
-## Blog Featured Image Examples
+## Sizing and Aspect Ratio
 
-```bash
-# Modern illustration style
-gemini --yolo "/generate 'modern flat illustration of developer coding at laptop, purple and blue gradient background, minimalist style, no text' --preview"
-
-# Professional photography style
-gemini --yolo "/generate 'professional editorial photo of coffee cup next to laptop on wooden desk, morning sunlight, shallow depth of field, no text' --count=3"
-
-# Tech/abstract
-gemini --yolo "/generate 'abstract visualization of neural network connections, dark background with glowing blue nodes, futuristic style' --preview"
-```
-
-## Icon Generation
-
-```bash
-gemini --yolo "/icon 'minimalist app logo for productivity tool' --sizes='64,128,256,512' --type='app-icon' --corners='rounded'"
-```
-
-## Diagram Generation
-
-```bash
-gemini --yolo "/diagram 'user authentication flow with OAuth' --type='flowchart' --style='modern'"
-```
-
-## Output Location
-
-All generated images are saved to `./nanobanana-output/` in the current directory.
+Default output is 1024×1024. State the intended use and aspect ratio inside the
+prompt ("wide 16:9 blog banner", "vertical 9:16 story image") — there are no CLI
+size flags in this pipeline. For exact pixel targets, resize the collected PNG
+locally afterward (e.g. ImageMagick).
 
 ## Presenting Results
 
-After generation completes:
-1. List contents of `./nanobanana-output/` to find generated files
-2. Present the most recent image(s) to the user
-3. Offer to regenerate with variations if needed
+1. Copy the image out of the sandbox into the project (see above).
+2. View/verify it yourself (Read the PNG), then present it to the user.
+3. Offer to regenerate or iterate if needed.
 
 ## Refinements and Iterations
 
-When the user asks for changes:
-- **"Try again" / "Give me options"**: Regenerate with `--count=3`
-- **"Make it more [adjective]"**: Adjust prompt and regenerate
-- **"Edit this one"**: Use `gemini --yolo "/edit nanobanana-output/filename.png 'adjustment'"`
-- **"Different style"**: Add `--styles="requested_style"` to the command
+- **"Try again" / variations**: re-run with the same prompt and a new `<NAME>`;
+  each run is a fresh session.
+- **"Make it more [adjective]"**: adjust the prompt and regenerate.
+- **"Edit this one"**: use the editing invocation with the copied-out file.
 
 ## Prompt Tips
 
-1. **Be specific**: Include style, mood, colors, composition details
-2. **Add "no text"**: If you don't want text rendered in the image
-3. **Reference styles**: "editorial photography", "flat illustration", "3D render", "watercolor"
-4. **Specify aspect ratio context**: "wide banner", "square thumbnail", "vertical story"
+1. **Be specific**: style, mood, colors, composition.
+2. **Add "no text"** if you don't want text rendered in the image (or spell out the
+   exact wording you DO want — Nano Banana renders text well when told precisely).
+3. **Reference styles**: "editorial photography", "flat illustration", "3D render",
+   "watercolor", "hand-drawn educational infographic".
+4. For dense infographics, write the full prompt to a file first, review it, then
+   inline it into the `-p` string.
 
 ## Troubleshooting
 
 | Problem | Solution |
-|---------|----------|
-| `GEMINI_API_KEY` not set | `export GEMINI_API_KEY="your-key"` |
-| Extension not found | Run install command from setup section |
-| Quota exceeded | Wait for reset or switch to flash model |
-| Image generation failed | Check prompt for policy violations, simplify request |
-| Output directory missing | Will be created automatically on first run |
+|---|---|
+| "tool required the command permission ... auto-denied" | Add `--dangerously-skip-permissions` (print mode cannot prompt) |
+| Reply says saved but cwd is empty | Expected — collect from `~/.gemini/antigravity-cli/scratch/` |
+| Nothing in scratch/ either | Check newest `~/.gemini/antigravity-cli/brain/<uuid>/` for raw JPG |
+| `agy models` asks for login | User must authenticate interactively once (their action, not yours) |
+| Output ignores composition details | Retry with `--model "Gemini 3.1 Pro (High)"` |
+| Hang / no exit | The `timeout 300` wrapper handles it; re-run once before diagnosing |
