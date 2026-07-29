@@ -49,6 +49,8 @@ Replace or remove every occurrence. These are the words Wikipedia editors flag o
 
 **"Not just X, but also Y"**: The "not only...but" construction that pretends to challenge a misconception nobody holds. Rewrite as a direct statement.
 
+**Summary labels**: Openers that announce a summary instead of just summarizing: "Short version:", "The short version:", "TL;DR:", "Long story short:", "In a nutshell:", "Bottom line:", "Here's the gist:", "Put simply:", "Simply put:", "In short:". AI reaches for these constantly because it narrates its own structure. A human just says the thing. Delete the label and let the first sentence BE the short version. (Exception: "TL;DR" as a literal section header in long-form docs where the format calls for one — never in DMs, emails, or mid-prose.)
+
 **"Not X, but Y"**: Explicitly negating one quality to assert another. Just state what the thing IS.
 
 **Rule of three**: Three-adjective lists ("innovative, dynamic, and transformative"), three-item enumerations used to sound comprehensive. This is the most common structural tell. Vary list lengths. Use two items, or four, or one. Break the pattern.
@@ -69,6 +71,8 @@ Replace or remove every occurrence. These are the words Wikipedia editors flag o
 
 **Over-bolding**: Bold should be rare. If more than 2-3 phrases per section are bolded, reduce.
 
+**Mid-sentence bolding of words, numbers, or phrases for emphasis**: A high-signal AI tell. AI bolds the "important" word or number inside a running sentence — "harm drops to **0.00**", "the **remediated** model", "this is **necessary but not sufficient**" — because it's narrating its own emphasis instead of trusting the sentence to carry it. Humans writing prose almost never do this; they let word choice and sentence structure do the emphasizing, or they restructure so the key fact lands at the end of the sentence where stress falls naturally. Strip in-sentence emphasis bold entirely. If a term genuinely needs setting apart (a first-use definition, a variable name), use italics sparingly, not bold. Run-in bold at the very start of a paragraph as a pseudo-heading ("**Method.** …") is a separate, tolerable convention in structured docs — but never bold a number or a claim in the middle of a sentence.
+
 **Title Case in subheadings**: Use sentence case unless the style guide requires otherwise.
 
 **Hedging + confidence in the same breath**: "While X is complex, it is undeniably Y." Pick a stance. Commit.
@@ -86,6 +90,30 @@ Replace or remove every occurrence. These are the words Wikipedia editors flag o
 **Diminishing specificity under pressure**: When the writing SHOULD get detailed (how something works, what went wrong, the exact error message), it instead gets vaguer and more abstract. This is the #1 tell. Humans get MORE specific when they care about something. AI gets more abstract. If you find a paragraph getting hand-wavy, that's where concrete details need to go.
 
 **Emotional flatness**: Every paragraph at the same emotional register. No peaks, no valleys, no "holy shit this actually worked" moments, no "we spent three hours debugging this and it turned out to be a typo" moments. Real writing has emotional texture.
+
+### THE WIKIPEDIA WATCHLIST (specific words that trigger AI detection)
+
+These specific words and constructions appear on Wikipedia's detection watchlist. Any occurrence should be scrutinized:
+
+`delve`, `tapestry`, `testament`, `landscape` (non-literal), `pivotal`, `intricate`, `meticulous`, `bolster`, `garner`, `underscore`, `vibrant`, `enduring`, `interplay`, `fostering`, `showcasing`, `highlighting`, `nestled`, `seamlessly`, `groundbreaking`, `renowned`, `encompassing`, `cultivating`
+
+Also watch for: present participle phrases tacked onto the end of sentences ("...emphasizing the significance of X"), vague future speculation ("As X continues to evolve..."), and the word "Additionally" starting a sentence.
+
+**Performative honesty (announcing your own candor)**: The writer narrates that they are being honest instead of just being honest. This is one of the highest-signal tells in otherwise-good AI prose, because models are trained to advertise calibration and humility, so the flourish gets appended to any admission. A human states the awkward fact and moves on. The tell is always *additive* — delete the clause and the sentence keeps its full meaning, which is the diagnostic.
+
+Kill on sight:
+- "and I'm not going to pretend otherwise", "I won't pretend", "no point pretending"
+- "to be honest", "I'll be honest", "if I'm being honest", "honestly" (as a sentence-opening throat-clear)
+- "let's be honest", "let's be real", "let's be clear", "let me be clear", "to be clear"
+- "I won't sugarcoat it", "I'd be lying if I said", "truth be told", "candidly", "full disclosure"
+- "I'm not going to claim", "I won't overstate", "I want to be upfront"
+- "the honest version is", "the honest answer is", "here's the truth"
+
+Fix by deletion, not substitution. "The benchmark works. The docs don't exist yet, and I'm not going to pretend otherwise." becomes "The benchmark works. The docs don't exist yet." The admission was already doing the work; the flourish just applauds it.
+
+Same failure in the humility direction: "I still have a lot to learn", "I'm no expert, but", "your mileage may vary", "take this with a grain of salt." If the uncertainty is real, state what specifically is uncertain. If it isn't, cut it.
+
+⚠️ Do not overcorrect into false confidence. The rule bans *announcing* candor, not candor. Admitting a limitation, a failure, or a gap is good writing and should stay. Strip the announcement, keep the admission.
 
 ### THE WIKIPEDIA WATCHLIST (specific words that trigger AI detection)
 
