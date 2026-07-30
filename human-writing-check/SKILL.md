@@ -101,6 +101,10 @@ Also watch for: present participle phrases tacked onto the end of sentences ("..
 
 **Performative honesty (announcing your own candor)**: The writer narrates that they are being honest instead of just being honest. This is one of the highest-signal tells in otherwise-good AI prose, because models are trained to advertise calibration and humility, so the flourish gets appended to any admission. A human states the awkward fact and moves on. The tell is always *additive* — delete the clause and the sentence keeps its full meaning, which is the diagnostic.
 
+**The general test, which matters more than the list.** If a clause's only job is to
+characterize the writer as honest, careful, or self-aware, cut it. Delete it and check
+whether the sentence lost any information. If it didn't, the clause was applause.
+
 Kill on sight:
 - "and I'm not going to pretend otherwise", "I won't pretend", "no point pretending"
 - "to be honest", "I'll be honest", "if I'm being honest", "honestly" (as a sentence-opening throat-clear)
@@ -108,6 +112,17 @@ Kill on sight:
 - "I won't sugarcoat it", "I'd be lying if I said", "truth be told", "candidly", "full disclosure"
 - "I'm not going to claim", "I won't overstate", "I want to be upfront"
 - "the honest version is", "the honest answer is", "here's the truth"
+
+**Future-tense candor promises are the same tell and are easy to miss**, because they read
+as helpful commitments rather than as self-description. A candid person does not pre-commit
+to candor, they just answer. Kill these too:
+- "I'll tell you when I'm inferring", "I'll tell you if I don't know"
+- "I'll be straight with you", "I'll flag it if", "I'll say so if"
+- "you'll always know where I stand", "I won't waste your time"
+- "I promise", "rest assured", "you have my word"
+
+These slip past a keyword scan built only from past and present forms, so check for the
+*shape* (a pledge about your own future honesty), not just the wording.
 
 Fix by deletion, not substitution. "The benchmark works. The docs don't exist yet, and I'm not going to pretend otherwise." becomes "The benchmark works. The docs don't exist yet." The admission was already doing the work; the flourish just applauds it.
 
