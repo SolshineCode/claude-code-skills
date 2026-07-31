@@ -63,11 +63,15 @@ Replace or remove every occurrence. These are the words Wikipedia editors flag o
 
 **Uniform paragraph/section structure**: Every section following the exact same template (intro sentence, three bullets, concluding sentence). Vary it. Some sections should be one sentence. Some should be five paragraphs. Irregularity is human.
 
+**Fixing the symptom instead of the disease.** Swapping out banned punctuation or banned words while leaving the identical underlying template in place, the same "Name, one-line description, link" shape repeated for every item, just with commas instead of colons, is not a fix. It's reward hacking the checklist. The surface violation is gone, but the tell that made it obvious in the first place, every item built from the same mold, is untouched. Where it makes sense to do an actual restructure, vary how much space each item gets and where the details sit in the sentence, the way someone would actually write it if they cared more about some of these than others. Look for the same *shape* as the surface violation you just fixed, and rewrite orthogonally to that pattern rather than just re-skinning it.
+
 **Markdown formatting (tables, bold, bullets, headers)**: Only use markdown if the destination requires it (README, docs, HF model card). Everywhere else, write plain prose. No tables in emails. No bullet lists in DMs. No bold in messages. Tables are an AI crutch for organizing information that should just be written as sentences. If a human wouldn't format it that way for that medium, neither should you.
 
 ### STYLE TELLS TO FIX
 
 **Em dashes (—) are THE top AI writing tell.** Claude loves em dashes. Humans rarely use them, especially in casual writing like DMs, emails, or social posts. In formal prose (blog posts, articles), max 1 per 500 words. In casual writing (LinkedIn messages, emails, social media), use ZERO. Replace every em dash with a comma, period, "and", or just start a new sentence. This is the single highest-signal AI detector and should be treated as a hard ban in short-form writing.
+
+**Setup colons (dramatic-reveal colons) are a hard ban in short-form and outreach.** A colon used to set up a punchy reveal, where an abstract or throat-clearing clause leads into "the real point," is a marketing/AI cadence tell. Kill every one. "The result was clear: it worked" becomes two sentences. "Here's the thing: nobody tested it" becomes two sentences. "One rule matters most: ship it" becomes two sentences. Rewrite as two plain sentences, or fold the clause in. **Data colons are fine** (before a list, a ratio, a label, or a concrete value, e.g. "Latency: 200ms" or "three providers: OpenAI, Anthropic, GROQ"). The test is whether what follows the colon is a full independent statement used for emphasis rather than a list or a value. If so, cut the colon. In emails, LinkedIn messages, cover letters, and social posts, target ZERO setup colons.
 
 **Over-bolding**: Bold should be rare. If more than 2-3 phrases per section are bolded, reduce.
 
@@ -99,7 +103,7 @@ These specific words and constructions appear on Wikipedia's detection watchlist
 
 Also watch for: present participle phrases tacked onto the end of sentences ("...emphasizing the significance of X"), vague future speculation ("As X continues to evolve..."), and the word "Additionally" starting a sentence.
 
-**Performative honesty (announcing your own candor)**: The writer narrates that they are being honest instead of just being honest. This is one of the highest-signal tells in otherwise-good AI prose, because models are trained to advertise calibration and humility, so the flourish gets appended to any admission. A human states the awkward fact and moves on. The tell is always *additive* — delete the clause and the sentence keeps its full meaning, which is the diagnostic.
+**Performative honesty (announcing your own candor)**: The writer narrates that they are being honest instead of just being honest. This is one of the highest-signal tells in otherwise-good AI prose, because models are trained to advertise calibration and humility, so the flourish gets appended to any admission. A human states the awkward fact and moves on. The tell is always *additive*. Delete the clause and the sentence keeps its full meaning, which is the diagnostic.
 
 **The general test, which matters more than the list.** If a clause's only job is to
 characterize the writer as honest, careful, or self-aware, cut it. Delete it and check
@@ -112,6 +116,7 @@ Kill on sight:
 - "I won't sugarcoat it", "I'd be lying if I said", "truth be told", "candidly", "full disclosure"
 - "I'm not going to claim", "I won't overstate", "I want to be upfront"
 - "the honest version is", "the honest answer is", "here's the truth"
+- "rather than claiming X as mine", "rather than claiming it as my own", "I'm building on this, not claiming it." Same disclaimer, phrased as attribution instead of a direct admission. Structurally identical to "I'm not going to claim," just wearing a citation costume.
 
 **Future-tense candor promises are the same tell and are easy to miss**, because they read
 as helpful commitments rather than as self-description. A candid person does not pre-commit
@@ -129,14 +134,6 @@ Fix by deletion, not substitution. "The benchmark works. The docs don't exist ye
 Same failure in the humility direction: "I still have a lot to learn", "I'm no expert, but", "your mileage may vary", "take this with a grain of salt." If the uncertainty is real, state what specifically is uncertain. If it isn't, cut it.
 
 ⚠️ Do not overcorrect into false confidence. The rule bans *announcing* candor, not candor. Admitting a limitation, a failure, or a gap is good writing and should stay. Strip the announcement, keep the admission.
-
-### THE WIKIPEDIA WATCHLIST (specific words that trigger AI detection)
-
-These specific words and constructions appear on Wikipedia's detection watchlist. Any occurrence should be scrutinized:
-
-`delve`, `tapestry`, `testament`, `landscape` (non-literal), `pivotal`, `intricate`, `meticulous`, `bolster`, `garner`, `underscore`, `vibrant`, `enduring`, `interplay`, `fostering`, `showcasing`, `highlighting`, `nestled`, `seamlessly`, `groundbreaking`, `renowned`, `encompassing`, `cultivating`
-
-Also watch for: present participle phrases tacked onto the end of sentences ("...emphasizing the significance of X"), vague future speculation ("As X continues to evolve..."), and the word "Additionally" starting a sentence.
 
 ## Rewrite Principles
 
