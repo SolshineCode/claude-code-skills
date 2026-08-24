@@ -274,3 +274,18 @@ Produces an HTML deck (via `frontend-slides`) or Marp Markdown (CLI-exportable t
 ```
 
 **Requires:** `investor-materials`, `frontend-slides` (both in this repo). `investor-outreach` and `human-writing-check` are optional extensions.
+
+---
+
+### research-slides
+**Build or review empirical ML/LLM research update slides.**
+
+Locally authored, based on [James Chua, John Hughes, Ethan Perez, Owain Evans, "Tips On Empirical Research Slides"](https://www.lesswrong.com/posts/i3b9uQfjJjJkwZF4f/tips-on-empirical-research-slides) (LessWrong, Jan 2025) — including visual patterns confirmed by inspecting the post's own example slide screenshots, plus Ted Sanders' comment additions.
+
+Covers deck structure for weekly mentor/team meetings (summary → agenda → results → backup → discussion), chart design rules (error bars, on-chart value labels, direction-labeled axes, when to avoid heatmaps or too-many-bars), and annotation patterns for prompt/completion examples, scaling curves, and term definitions.
+
+```
+/research-slides       # build or review a research update deck
+```
+
+**Requires:** Nothing. Pair with `frontend-slides` if the deliverable is an HTML/reveal.js deck.
