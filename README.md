@@ -289,3 +289,29 @@ Covers deck structure for weekly mentor/team meetings (summary → agenda → re
 ```
 
 **Requires:** Nothing. Pair with `frontend-slides` if the deliverable is an HTML/reveal.js deck.
+
+---
+
+### claude-labelling
+**Label a dataset with Claude Code subagents: measured quality, paced spend.**
+
+Runs a labelling job (per-item or per-turn labels over transcripts, logs, documents or any text) on your Claude Code subscription, and treats both label quality and plan usage as measured quantities.
+
+- **Quality:**
+  - a schema written first;
+  - labellers see exactly what the labelled system saw;
+  - a pilot with two isolated labellers and a Cohen's kappa gate;
+  - mechanical truth checks wherever the data allows;
+  - tranches with a seeded 25% independent overlap and copy-detection;
+  - a uniform correction sweep, every correction recorded and raw labels never edited.
+- **Spend:** `pace.py` turns the numbers on the usage page into GO / WAIT / STOP before every batch:
+  - a session ceiling below the limit;
+  - a weekly reserve that shrinks as renewal approaches, up to 98% in the final two hours;
+  - tighter ceilings if usage credits (real money) are switched on.
+
+```
+/claude-labelling      # label a dataset, pacing spend against your plan
+python pace.py --session 19 --week 48 --week-reset "2026-09-25 19:00" --batch-session 18 --batch-week 1.5 --credits-on
+```
+
+**Requires:** Nothing to run the pacer. Reading the usage page automatically needs the Claude in Chrome extension; otherwise read the numbers yourself.
