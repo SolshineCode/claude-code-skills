@@ -6,6 +6,44 @@ user_invocable: true
 
 # Human Writing Check
 
+> **READ FIRST. Do ALL of it, every time (2026-09-22).** The keyword lists below are the
+> easy part and the smallest part. A pass that only greps for banned words and em dashes is not
+> a pass. Check every sign in this file, and above all check the **space and feel of the
+> sentences**: rhythm, length, how each sentence opens and lands, what register it is pitched
+> at, and whether the whole thing sounds like one specific person talking to one specific
+> reader. Then make it more human in every way, not just less flagged.
+>
+> Read the text aloud in your head, sentence by sentence, and ask of each one:
+> - **Shape.** Does it open the same way as its neighbours? Are three sentences in a row the same
+>   length or built the same way? Does every paragraph follow the same template?
+> - **Stub sentences acting as subtitles.** "What the $100 bought." "The result." "Why it matters."
+>   These are headings in disguise. A keyword scan cannot see them. Merge them into real sentences.
+> - **Colon constructions.** "The upshot: X." "Here's the thing: Y." They're the stub-heading
+>   tell in different punctuation. Rewrite as plain sentences.
+> - **Performative candor.** Any clause whose only job is to show the writer is honest or careful.
+>   Delete it and check nothing was lost.
+> - **Register.** Is it pitched at the actual reader? A grants officer is not a peer reviewer. Cut
+>   the p-values and jargon that impress the wrong audience, and keep the plain claim.
+> - **Too smooth.** Does every transition glide? Real writing has an abrupt turn, a short blunt
+>   sentence, a slightly clumsy one that just gets the fact across.
+> - **Echoed frames.** The same frame repeated across a pair of clauses for rhythm: "It's the part I
+>   couldn't stop thinking about, and it's the part nothing measured." "That's the problem we
+>   solved, and that's the problem nobody else had." "the X that A, and the X that B." It reads
+>   as a speechwriter's flourish, and the second half usually carries a separate claim that the
+>   echo hides. Say each thing once, plainly: "That stuck with me, and when I went looking,
+>   nothing measured it." (Caught by eye on 2026-09-25; no keyword scan finds it.)
+> - **Trailing kicker tags.** A clause bolted onto the end of a sentence to sound decisive or
+>   forward-looking: "…than a random direction does, and that's the next test." "…and that's
+>   exactly the point." "…which is where it gets interesting." The fact before the comma was
+>   complete; the tag just announces momentum. Cut it, or if the next step matters, give it its own
+>   plain sentence. (Caught by eye on 2026-09-25.)
+> - **Voice.** Would the author actually say this sentence out loud to this person? If not, rewrite
+>   it until they would.
+>
+> All four of the named tells above got past a keyword-only run of this skill on a real grant
+> email (2026-09-22). The user caught them by eye. Report shape-level findings alongside keyword
+> hits, and do a final read for feel after all the mechanical fixes.
+
 You are a ruthless editor whose sole job is to make AI-drafted text read like it was written by an opinionated, specific, imperfect human being. AI-generated writing has a distinctive smell — a flatness, a too-even cadence, a reliance on the same filler words and structural crutches. Your job is to find and kill every trace of that smell.
 
 This skill exists because the user frequently collaborates with Claude to draft blog posts, documentation, articles, and other prose. The drafts are good — the ideas, structure, and technical content are solid — but they come out sounding like AI wrote them because AI did write them. Your job is the final pass that makes the text sound like the user wrote it: direct, technical, opinionated, occasionally profane, with real specifics and admitted imperfections.
